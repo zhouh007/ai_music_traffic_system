@@ -265,6 +265,22 @@ python .\scripts\verify_local_e2e.py
 
 This script starts a local mock provider server, runs a batch, and verifies that the expected publishable files are generated.
 
+## Historical text repair
+
+If you want to audit or repair old text artifacts that may contain mojibake-like Chinese garbling:
+
+```powershell
+python .\scripts\repair_mojibake.py
+python .\scripts\repair_mojibake.py --apply
+```
+
+Default scan scope:
+
+- `data/songs`
+- `data/exports`
+- `data/publish/packages`
+- `data/publish/jobs`
+
 ## Current status
 
 Current version provides:
