@@ -42,6 +42,11 @@ class BatchOrchestrator:
 
             clean_lyrics = normalize_lyrics(raw_lyrics)
             write_text(song.lyrics_clean_path, clean_lyrics)
+            refined_title, title_prompt, title_response = self.lyrics_provider.refine_title(topic, clean_lyrics)
+            song.title = refined_title
+            write_text(song.song_dir / "title_prompt.txt", title_prompt)
+            write_json(song.song_dir / "title_response.json", title_response)
+            write_text(song.song_dir / "title_selected.txt", refined_title)
 
             music_meta = self.music_provider.generate_music(
                 lyrics=clean_lyrics,
@@ -95,6 +100,30 @@ class BatchOrchestrator:
         write_json(song.song_dir / "song.json", song.model_dump(mode="json"))
         return song
 
+    def refine_song_title(self, song_id: str) -> SongRecord:
+        song_dir = self.config.songs_dir / song_id
+        topic = TopicRecord.model_validate_json((song_dir / "topic.json").read_text(encoding="utf-8"))
+        song = SongRecord.model_validate_json((song_dir / "song.json").read_text(encoding="utf-8"))
+        lyrics = song.lyrics_clean_path.read_text(encoding="utf-8")
+        refined_title, title_prompt, title_response = self.lyrics_provider.refine_title(topic, lyrics)
+        song.title = refined_title
+        write_text(song.song_dir / "title_prompt.txt", title_prompt)
+        write_json(song.song_dir / "title_response.json", title_response)
+        write_text(song.song_dir / "title_selected.txt", refined_title)
+        render_publish_covers(
+            source_path=song.cover_raw_path,
+            publish_path=song.cover_publish_path,
+            hd_path=song.cover_hd_path,
+            title=song.title,
+            publish_size=self.config.cover_publish_size,
+            hd_size=self.config.cover_hd_size,
+        )
+        write_json(song.meta_path, build_song_metadata(song, topic))
+        write_text(song.caption_path, build_caption(song, topic))
+        write_json(song.song_dir / "song.json", song.model_dump(mode="json"))
+        log_step(f"Refined title for {song.song_id} -> {song.title}")
+        return song
+
     def retry_song_step(self, song_id: str, step: str) -> SongRecord:
         song_dir = self.config.songs_dir / song_id
         topic_path = song_dir / "topic.json"
@@ -141,7 +170,7 @@ class BatchOrchestrator:
             song_id=song_id,
             topic_id=topic.topic_id,
             batch_id=topic.batch_id,
-            title=_derive_title(topic.topic),
+            title=topic.topic.strip()[:12] if len(topic.topic.strip()) > 12 else topic.topic.strip(),
             mode=topic.generation_mode or "text_to_music",
             status="running",
             song_dir=song_dir,
@@ -155,10 +184,3 @@ class BatchOrchestrator:
             caption_path=song_dir / "caption.txt",
             review_path=song_dir / "review.json",
         )
-
-
-def _derive_title(topic: str) -> str:
-    compact = topic.strip()
-    if len(compact) <= 12:
-        return compact
-    return compact[:12]

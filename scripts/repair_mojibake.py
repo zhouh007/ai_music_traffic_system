@@ -66,7 +66,8 @@ def main() -> None:
         target_path = project_root / target
         if not target_path.exists():
             continue
-        for file_path in target_path.rglob("*"):
+        file_iter = [target_path] if target_path.is_file() else target_path.rglob("*")
+        for file_path in file_iter:
             if not file_path.is_file() or file_path.suffix.lower() not in TEXT_EXTENSIONS:
                 continue
             result = inspect_and_repair_file(file_path, write_changes=args.apply)
@@ -121,10 +122,23 @@ def main() -> None:
 
 
 def inspect_and_repair_file(file_path: Path, write_changes: bool) -> RepairResult | None:
+    raw_bytes = file_path.read_bytes()
+
     try:
-        original = file_path.read_text(encoding="utf-8")
+        original = raw_bytes.decode("utf-8")
     except UnicodeDecodeError:
-        return RepairResult(file_path, changed=False, reason="not_utf8_text")
+        decoded = try_decode_legacy_text(raw_bytes)
+        if decoded is None:
+            return RepairResult(file_path, changed=False, reason="unrecognized_non_utf8_text")
+        if write_changes:
+            file_path.write_text(decoded, encoding="utf-8")
+        return RepairResult(
+            path=file_path,
+            changed=True,
+            reason="converted_legacy_text_to_utf8",
+            preview_before="<non-utf8 text>",
+            preview_after=preview_text(decoded),
+        )
 
     if not contains_suspect_markers(original):
         return None
@@ -163,6 +177,19 @@ def try_repair_text(text: str) -> str:
             continue
         candidates.append(repaired)
 
+    best = max(candidates, key=score_text_quality)
+    return best
+
+
+def try_decode_legacy_text(raw_bytes: bytes) -> str | None:
+    candidates: list[str] = []
+    for encoding_name in ("gb18030", "gbk"):
+        try:
+            candidates.append(raw_bytes.decode(encoding_name))
+        except UnicodeError:
+            continue
+    if not candidates:
+        return None
     best = max(candidates, key=score_text_quality)
     return best
 

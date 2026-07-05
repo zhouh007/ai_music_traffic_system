@@ -59,6 +59,9 @@ def main() -> None:
     retry_parser.add_argument("--song-id", required=True)
     retry_parser.add_argument("--step", choices=["music", "cover", "package", "all"], required=True)
 
+    refine_title_parser = subparsers.add_parser("refine-title", help="Refine one generated song title")
+    refine_title_parser.add_argument("--song-id", required=True)
+
     expand_topics_parser = subparsers.add_parser("expand-topics", help="Expand seed topics into a new batch CSV")
     expand_topics_parser.add_argument("--topics-file", required=True)
     expand_topics_parser.add_argument("--count", type=int, required=True)
@@ -102,6 +105,11 @@ def main() -> None:
     publish_complete_parser = subparsers.add_parser("publish-complete", help="Mark one publish job as completed")
     publish_complete_parser.add_argument("--job-id", required=True)
     publish_complete_parser.add_argument("--external-post-id", default="")
+
+    publish_review_parser = subparsers.add_parser("publish-under-review", help="Mark one publish job as submitted and under review")
+    publish_review_parser.add_argument("--job-id", required=True)
+    publish_review_parser.add_argument("--external-post-id", default="")
+    publish_review_parser.add_argument("--notes", default="")
 
     publish_fail_parser = subparsers.add_parser("publish-fail", help="Mark one publish job as failed")
     publish_fail_parser.add_argument("--job-id", required=True)
@@ -174,6 +182,9 @@ def main() -> None:
     if args.command == "retry-song":
         _retry_song(project_root, config, args.song_id, args.step)
         return
+    if args.command == "refine-title":
+        _refine_title(project_root, config, args.song_id)
+        return
     if args.command == "expand-topics":
         output_path = automation.expand_topics(
             source_topics_file=_resolve_path(project_root, args.topics_file),
@@ -236,6 +247,14 @@ def main() -> None:
         job = publish_manager.complete_job(
             job_id=args.job_id,
             external_post_id=args.external_post_id,
+        )
+        print(job.model_dump_json(indent=2))
+        return
+    if args.command == "publish-under-review":
+        job = publish_manager.mark_job_under_review(
+            job_id=args.job_id,
+            external_post_id=args.external_post_id,
+            notes=args.notes,
         )
         print(job.model_dump_json(indent=2))
         return
@@ -385,6 +404,12 @@ def _retry_song(project_root: Path, config, song_id: str, step: str) -> None:
     orchestrator = BatchOrchestrator(project_root, config)
     song = orchestrator.retry_song_step(song_id=song_id, step=step)
     log_step(f"Retried {step} for {song.song_id} | status={song.status}")
+
+
+def _refine_title(project_root: Path, config, song_id: str) -> None:
+    orchestrator = BatchOrchestrator(project_root, config)
+    song = orchestrator.refine_song_title(song_id=song_id)
+    log_step(f"Refined title for {song.song_id} | title={song.title}")
 
 
 def _resolve_path(project_root: Path, raw_path: str) -> Path:

@@ -15,6 +15,7 @@ data/publish/packages/
 data/publish/browser_profiles/
 data/publish/*.png
 data/publish/*.json
+data/publish/*.log
 data/publish/*inspect*.json
 data/publish/*after_click*.json
 data/publish/*entry*.json

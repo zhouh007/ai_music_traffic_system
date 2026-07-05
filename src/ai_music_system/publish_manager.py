@@ -17,6 +17,7 @@ PUBLISH_JOB_STATUSES = {
     "ready",
     "browser_opened",
     "saved_for_review",
+    "under_review",
     "completed",
     "failed",
 }
@@ -246,6 +247,18 @@ class PublishManager:
         job.external_post_id = external_post_id
         self._save_job(job_path, job)
         log_step(f"Completed publish job {job.job_id}")
+        return job
+
+    def mark_job_under_review(self, job_id: str, external_post_id: str = "", notes: str = "") -> PublishJobRecord:
+        job_path = self._find_job_path(job_id)
+        job = self._load_job(job_path)
+        job.status = "under_review"
+        job.started_at = job.started_at or datetime.now().isoformat(timespec="seconds")
+        job.external_post_id = external_post_id
+        if notes:
+            job.notes = notes
+        self._save_job(job_path, job)
+        log_step(f"Marked publish job {job.job_id} under review")
         return job
 
     def fail_job(self, job_id: str, reason: str) -> PublishJobRecord:

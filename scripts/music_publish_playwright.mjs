@@ -120,6 +120,20 @@ async function clickFullTrackEntry(page, selectors) {
   if (await clickFirst(page, buttonSelectors)) {
     return true;
   }
+  const textCandidates = ["发布全曲", "全曲作品"];
+  for (const text of textCandidates) {
+    try {
+      const locator = page.getByText(text, { exact: false }).first();
+      if ((await locator.count()) > 0) {
+        await locator.waitFor({ state: "visible", timeout: 10000 }).catch(() => {});
+        await locator.scrollIntoViewIfNeeded().catch(() => {});
+        await locator.click({ force: true, timeout: 10000 });
+        return true;
+      }
+    } catch (_error) {
+      continue;
+    }
+  }
   const fallback = page.locator("button.submit").first();
   if ((await fallback.count()) > 0) {
     await fallback.waitFor({ state: "visible", timeout: 10000 }).catch(() => {});
