@@ -1,0 +1,164 @@
+from __future__ import annotations
+
+from pathlib import Path
+
+from .http import JsonHttpClient
+from .models import SongRecord, TopicRecord
+from .pipeline.cover_renderer import render_publish_covers
+from .pipeline.lyrics_cleaner import normalize_lyrics
+from .pipeline.package_builder import build_caption, build_song_metadata
+from .providers.image.agnes_provider import AgnesImageProvider
+from .providers.llm.deepseek_provider import DeepSeekLyricsProvider
+from .providers.music.minimax_provider import MiniMaxMusicProvider
+from .review.review_store import save_default_review
+from .storage.file_store import ensure_dir, write_json, write_text
+from .storage.run_log import log_step
+
+
+class BatchOrchestrator:
+    def __init__(self, project_root: Path, config) -> None:
+        self.project_root = project_root
+        self.config = config
+        self.http_client = JsonHttpClient()
+        self.lyrics_provider = DeepSeekLyricsProvider(config.lyrics_provider, self.http_client)
+        self.music_provider = MiniMaxMusicProvider(config.music_provider, self.http_client)
+        self.image_provider = AgnesImageProvider(config.image_provider, self.http_client)
+
+    def run_topic(self, topic: TopicRecord) -> SongRecord:
+        song_id = topic.topic_id.replace("tp_", "song_")
+        song_dir = ensure_dir(self.config.songs_dir / song_id)
+        song = self._build_song_record(song_id, topic, song_dir)
+
+        log_step(f"Running topic {topic.topic_id} -> {song.song_id}")
+        write_json(song.song_dir / "topic.json", topic.model_dump())
+        try:
+            lyrics_prompt = (
+                self.project_root / "src" / "ai_music_system" / "prompts" / "lyrics_prompt.txt"
+            ).read_text(encoding="utf-8")
+            raw_lyrics, used_prompt, lyrics_response = self.lyrics_provider.generate_lyrics(topic, lyrics_prompt)
+            write_text(song.song_dir / "lyrics_prompt.txt", used_prompt)
+            write_text(song.lyrics_raw_path, raw_lyrics)
+            write_json(song.song_dir / "lyrics_response.json", lyrics_response)
+
+            clean_lyrics = normalize_lyrics(raw_lyrics)
+            write_text(song.lyrics_clean_path, clean_lyrics)
+
+            music_meta = self.music_provider.generate_music(
+                lyrics=clean_lyrics,
+                title=song.title,
+                style_hint=topic.style_hint,
+                output_path=song.audio_path,
+                generation_mode=topic.generation_mode,
+                reference_audio_url=topic.reference_audio_url,
+            )
+            write_json(song.song_dir / "music_response.json", music_meta)
+
+            cover_prompt_template = (
+                self.project_root / "src" / "ai_music_system" / "prompts" / "cover_prompt.txt"
+            ).read_text(encoding="utf-8")
+            cover_prompt = cover_prompt_template.format(
+                topic=topic.topic,
+                mood=topic.mood,
+                scene=topic.scene,
+                style_hint=topic.style_hint,
+            )
+            write_text(song.song_dir / "cover_prompt.txt", cover_prompt)
+            cover_meta = self.image_provider.generate_cover(cover_prompt, song.cover_raw_path)
+            write_json(song.song_dir / "cover_response.json", cover_meta)
+
+            render_publish_covers(
+                source_path=song.cover_raw_path,
+                publish_path=song.cover_publish_path,
+                hd_path=song.cover_hd_path,
+                title=song.title,
+                publish_size=self.config.cover_publish_size,
+                hd_size=self.config.cover_hd_size,
+            )
+
+            song.status = "generated"
+            write_json(song.meta_path, build_song_metadata(song, topic))
+            write_text(song.caption_path, build_caption(song, topic))
+            save_default_review(song.review_path, song.song_id)
+            log_step(f"Finished song {song.song_id}")
+        except Exception as exc:
+            song.status = "failed"
+            song.error_message = str(exc)
+            write_json(
+                song.song_dir / "error.json",
+                {
+                    "song_id": song.song_id,
+                    "topic_id": song.topic_id,
+                    "error_message": song.error_message,
+                },
+            )
+            log_step(f"Failed song {song.song_id}: {song.error_message}")
+        write_json(song.song_dir / "song.json", song.model_dump(mode="json"))
+        return song
+
+    def retry_song_step(self, song_id: str, step: str) -> SongRecord:
+        song_dir = self.config.songs_dir / song_id
+        topic_path = song_dir / "topic.json"
+        if not topic_path.exists():
+            raise FileNotFoundError(f"Topic file not found for song: {song_id}")
+        topic = TopicRecord.model_validate_json(topic_path.read_text(encoding="utf-8"))
+        song = self._build_song_record(song_id, topic, song_dir)
+        requested_step = step.strip().lower()
+        log_step(f"Retrying {requested_step} for {song_id}")
+        if requested_step == "all":
+            return self.run_topic(topic)
+        if requested_step == "music":
+            clean_lyrics = song.lyrics_clean_path.read_text(encoding="utf-8")
+            music_meta = self.music_provider.generate_music(
+                lyrics=clean_lyrics,
+                title=song.title,
+                style_hint=topic.style_hint,
+                output_path=song.audio_path,
+                generation_mode=topic.generation_mode,
+                reference_audio_url=topic.reference_audio_url,
+            )
+            write_json(song.song_dir / "music_response.json", music_meta)
+        if requested_step == "cover":
+            cover_prompt = (song.song_dir / "cover_prompt.txt").read_text(encoding="utf-8")
+            cover_meta = self.image_provider.generate_cover(cover_prompt, song.cover_raw_path)
+            write_json(song.song_dir / "cover_response.json", cover_meta)
+            render_publish_covers(
+                source_path=song.cover_raw_path,
+                publish_path=song.cover_publish_path,
+                hd_path=song.cover_hd_path,
+                title=song.title,
+                publish_size=self.config.cover_publish_size,
+                hd_size=self.config.cover_hd_size,
+            )
+        if requested_step == "package":
+            write_json(song.meta_path, build_song_metadata(song, topic))
+            write_text(song.caption_path, build_caption(song, topic))
+        song.status = "generated"
+        write_json(song.song_dir / "song.json", song.model_dump(mode="json"))
+        return song
+
+    def _build_song_record(self, song_id: str, topic: TopicRecord, song_dir: Path) -> SongRecord:
+        return SongRecord(
+            song_id=song_id,
+            topic_id=topic.topic_id,
+            batch_id=topic.batch_id,
+            title=_derive_title(topic.topic),
+            mode=topic.generation_mode or "text_to_music",
+            status="running",
+            song_dir=song_dir,
+            lyrics_raw_path=song_dir / "lyrics_raw.txt",
+            lyrics_clean_path=song_dir / "lyrics_clean.txt",
+            audio_path=song_dir / "audio.mp3",
+            cover_raw_path=song_dir / "cover_raw.png",
+            cover_publish_path=song_dir / "cover_publish.png",
+            cover_hd_path=song_dir / "cover_hd.jpg",
+            meta_path=song_dir / "meta.json",
+            caption_path=song_dir / "caption.txt",
+            review_path=song_dir / "review.json",
+        )
+
+
+def _derive_title(topic: str) -> str:
+    compact = topic.strip()
+    if len(compact) <= 12:
+        return compact
+    return compact[:12]

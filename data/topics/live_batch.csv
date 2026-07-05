@@ -1,0 +1,2 @@
+topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url
+tp_20260705_001,batch_20260705_live,深夜翻到前任聊天记录,18-28岁短视频情绪用户,伤感,夜晚独处刷手机,中文流行抒情,douyin,pending,text_to_music,

@@ -1,0 +1,49 @@
+{
+  "login_wait_hint": "Log in manually first, then let the script continue.",
+  "publish_entry_url": "https://music.douyin.com/console/publish?enter_from=publish_main_button",
+  "full_track_buttons": [
+    "button.douyin-music-button-primary.submit",
+    ".submit-wrapper > button",
+    ".style__Card-jkzLck .submit"
+  ],
+  "audio_type_radios": [
+    "input[type='radio']"
+  ],
+  "audio_inputs": [
+    "input.douyin-music-upload-hidden-input[accept*='audio']",
+    "input.douyin-music-upload-hidden-input-replace[accept*='audio']"
+  ],
+  "cover_inputs": [
+    "input.douyin-music-upload-hidden-input[accept*='.jpg']",
+    "input.douyin-music-upload-hidden-input-replace[accept*='.jpg']"
+  ],
+  "title_inputs": [
+    "input.douyin-music-input[placeholder]",
+    "input.douyin-music-input"
+  ],
+  "caption_inputs": [
+    "textarea.douyin-music-input-textarea"
+  ],
+  "lyrics_inputs": [
+    "textarea.douyin-music-input-textarea-autosize"
+  ],
+  "full_track_ready_checks": [
+    "textarea.douyin-music-input-textarea-autosize",
+    "input.douyin-music-upload-hidden-input[accept*='audio']"
+  ],
+  "title_ready_checks": [
+    "input.douyin-music-input[placeholder]",
+    "textarea.douyin-music-input-textarea-autosize"
+  ],
+  "auth_proof_inputs": [
+    "input.douyin-music-upload-hidden-input[accept*='.zip']",
+    "input.douyin-music-upload-hidden-input-replace[accept*='.zip']"
+  ],
+  "draft_buttons": [
+    "button.douyin-music-button-tertiary.storm-v2-tertiary"
+  ],
+  "submit_buttons": [
+    "button.douyin-music-button-primary.storm-v2-primary",
+    "button.douyin-music-button-primary.uuF3T"
+  ]
+}

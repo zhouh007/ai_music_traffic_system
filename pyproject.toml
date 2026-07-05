@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-music-traffic-system"
+version = "0.1.0"
+description = "Traffic-first AI music generation and publishing workflow"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "pydantic>=2.8.0",
+  "Pillow>=10.4.0",
+  "imageio-ffmpeg>=0.6.0",
+]
+
+[project.scripts]
+ai-music = "ai_music_system.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
