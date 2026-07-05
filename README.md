@@ -60,7 +60,12 @@ pip install -e .
 
 ### 3. Configure API keys
 
-Set environment variables:
+Preferred local setup:
+
+1. Copy `.env.example` to `.env`
+2. Fill in your real keys
+
+Or set environment variables manually:
 
 ```powershell
 $env:DEEPSEEK_API_KEY="your_key"

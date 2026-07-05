@@ -19,6 +19,7 @@ TOPIC_FIELDNAMES = [
     "status",
     "generation_mode",
     "reference_audio_url",
+    "distribution_target",
 ]
 
 
@@ -53,6 +54,7 @@ def build_topic_record(
     publish_platform: str,
     generation_mode: str = "text_to_music",
     reference_audio_url: str = "",
+    distribution_target: str = "hybrid",
 ) -> TopicRecord:
     return TopicRecord(
         topic_id=f"tp_{datetime.now():%Y%m%d}_{index:03d}",
@@ -66,4 +68,5 @@ def build_topic_record(
         status="pending",
         generation_mode=generation_mode.strip() or "text_to_music",
         reference_audio_url=reference_audio_url.strip(),
+        distribution_target=distribution_target.strip() or "hybrid",
     )

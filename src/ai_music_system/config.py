@@ -8,6 +8,7 @@ from .models import AppConfig, ImageProviderConfig, LyricsProviderConfig, MusicP
 
 
 def load_app_config(project_root: Path) -> AppConfig:
+    _load_env_file(project_root / ".env")
     pipeline = _load_json_with_override(
         project_root / "config" / "pipeline.example.json",
         project_root / "config" / "pipeline.local.json",
@@ -105,3 +106,20 @@ def _resolve_api_key(env_name: str) -> str:
     if not value:
         raise RuntimeError(f"Missing required API key environment variable: {env_name}")
     return value
+
+
+def _load_env_file(env_path: Path) -> None:
+    if not env_path.exists():
+        return
+    for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        env_name = key.strip()
+        env_value = value.strip()
+        if not env_name:
+            continue
+        if len(env_value) >= 2 and env_value[0] == env_value[-1] and env_value[0] in {"'", '"'}:
+            env_value = env_value[1:-1]
+        os.environ.setdefault(env_name, env_value)

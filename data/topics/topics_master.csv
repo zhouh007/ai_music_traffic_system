@@ -1,3 +1,3 @@
-topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url
-tp_20260704_001,batch_20260704_demo,分手后还留着聊天记录,18-28岁女生,伤感,深夜刷短视频,中文流行抒情,douyin,pending,text_to_music,
-tp_20260704_002,batch_20260704_demo,成年人的告别都是静悄悄,20-35岁都市人群,克制遗憾,下班回家路上,都市流行情绪歌,douyin,pending,text_to_music,
+topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url,distribution_target
+tp_20260704_001,batch_20260704_demo,分手后还留着聊天记录,18-28岁情绪向女声受众,伤感,深夜刷短视频,中文流行抒情,douyin,pending,text_to_music,,short_video
+tp_20260704_002,batch_20260704_demo,成年人的告别都是静悄悄,20-35岁都市情绪人群,克制遗憾,下班回家路上,都市流行情绪歌,douyin,pending,text_to_music,,hybrid

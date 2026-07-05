@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from .http import JsonHttpClient
+from .lyrics_prompting import load_lyrics_prompt
 from .models import SongRecord, TopicRecord
 from .pipeline.cover_renderer import render_publish_covers
 from .pipeline.lyrics_cleaner import normalize_lyrics
@@ -32,10 +33,9 @@ class BatchOrchestrator:
         log_step(f"Running topic {topic.topic_id} -> {song.song_id}")
         write_json(song.song_dir / "topic.json", topic.model_dump())
         try:
-            lyrics_prompt = (
-                self.project_root / "src" / "ai_music_system" / "prompts" / "lyrics_prompt.txt"
-            ).read_text(encoding="utf-8")
+            lyrics_prompt, prompt_variant = load_lyrics_prompt(self.project_root, topic)
             raw_lyrics, used_prompt, lyrics_response = self.lyrics_provider.generate_lyrics(topic, lyrics_prompt)
+            write_text(song.song_dir / "lyrics_prompt_variant.txt", prompt_variant)
             write_text(song.song_dir / "lyrics_prompt.txt", used_prompt)
             write_text(song.lyrics_raw_path, raw_lyrics)
             write_json(song.song_dir / "lyrics_response.json", lyrics_response)

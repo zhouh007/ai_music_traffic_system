@@ -16,6 +16,7 @@ class DeepSeekLyricsProvider:
             mood=topic.mood,
             scene=topic.scene,
             style_hint=topic.style_hint,
+            distribution_target=topic.distribution_target,
         )
         payload = {
             "model": self.config.model,

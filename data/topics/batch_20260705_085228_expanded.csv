@@ -1,3 +1,3 @@
-﻿topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url
-tp_20260705_001,batch_20260705_085228_expanded,刷朋友圈看到前任官宣新恋情,18-30岁经历过分手的短视频用户,释然中带点酸涩,深夜失眠刷社交媒体,中文流行抒情+轻电子,douyin,pending,text_to_music,
-tp_20260705_002,batch_20260705_085228_expanded,凌晨三点改完第18版方案,20-35岁职场打工人,疲惫但倔强,深夜加班对着电脑屏幕,摇滚风格中文说唱,kuaishou,pending,text_to_music,
+topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url,distribution_target
+tp_20260705_001,batch_20260705_085228_expanded,旧外套口袋里还有你的车票,18-28岁情绪流行用户,失落,夜班回家地铁上,都市流行抒情,douyin,pending,text_to_music,,short_video
+tp_20260705_002,batch_20260705_085228_expanded,雨停之后还是没等到那句晚安,20-30岁治愈情歌用户,遗憾,凌晨出租屋窗边,中文情绪流行,douyin,pending,text_to_music,,hybrid
