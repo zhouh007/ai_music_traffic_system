@@ -91,12 +91,25 @@ MiniMax note:
 - optional reference-audio mode uses `music-cover-free`
 - use `generation_mode=text_to_music` for normal lyric-driven generation
 - use `generation_mode=reference_audio` only when you have a valid `reference_audio_url`
+- use `distribution_target=short_video|hybrid|music_platform` to steer lyrics structure by release goal
 
 ### 4. Prepare topics
 
 Edit:
 
 `data/topics/topics_master.csv`
+
+Topic CSV supports:
+
+- `distribution_target=short_video`
+- `distribution_target=hybrid`
+- `distribution_target=music_platform`
+
+Suggested usage:
+
+- `short_video`: Douyin / Kuaishou first, stronger early hook
+- `hybrid`: shared default for short video plus music distribution
+- `music_platform`: Fanqie Music / Qishui Music first, more complete single-song feel
 
 ### 5. Run a batch
 
@@ -256,6 +269,7 @@ Current version provides:
 - config loading
 - file-based topic loading
 - real provider integration for DeepSeek, MiniMax, and Agnes
+- distribution-target-aware lyrics prompt selection
 - pipeline orchestration and failure logging
 - packaging and review file handling
 - batch review status listing

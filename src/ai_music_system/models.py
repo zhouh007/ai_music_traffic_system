@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class TopicRecord(BaseModel):
@@ -17,6 +17,7 @@ class TopicRecord(BaseModel):
     status: str = "pending"
     generation_mode: str = "text_to_music"
     reference_audio_url: str = ""
+    distribution_target: str = "hybrid"
 
 
 class SongRecord(BaseModel):
@@ -72,6 +73,25 @@ class PublishJobRecord(BaseModel):
     completed_at: str = ""
     external_post_id: str = ""
     notes: str = ""
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_legacy_fields(cls, data):
+        if not isinstance(data, dict):
+            return data
+
+        normalized = dict(data)
+        if normalized.get("video_path") in {".", "", "null"}:
+            normalized["video_path"] = None
+
+        legacy_status_map = {
+            "launched": "browser_opened",
+            "automation_ran": "saved_for_review",
+        }
+        status = normalized.get("status")
+        if status in legacy_status_map:
+            normalized["status"] = legacy_status_map[status]
+        return normalized
 
 
 class AppConfig(BaseModel):

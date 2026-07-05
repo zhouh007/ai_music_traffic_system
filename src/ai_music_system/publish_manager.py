@@ -12,6 +12,15 @@ from .storage.run_log import log_step
 from .video_builder import build_cover_video
 
 
+PUBLISH_JOB_STATUSES = {
+    "pending",
+    "ready",
+    "browser_opened",
+    "saved_for_review",
+    "completed",
+    "failed",
+}
+
 PLATFORM_PRESETS = {
     "douyin": {
         "platform_type": "video",
@@ -158,10 +167,9 @@ class PublishManager:
         return created_jobs
 
     def list_jobs(self, status: str | None = None, platform: str | None = None) -> list[dict]:
-        jobs_root = ensure_dir(self.config.publish_dir / "jobs")
         rows: list[dict] = []
-        for job_path in sorted(jobs_root.glob("pub_*.json")):
-            job = PublishJobRecord.model_validate_json(job_path.read_text(encoding="utf-8"))
+        for job_path in self._iter_job_paths():
+            job = self._load_job(job_path)
             if status and job.status != status:
                 continue
             if platform and job.platform != platform:
@@ -183,9 +191,9 @@ class PublishManager:
 
     def run_job(self, job_id: str, launch_browser: bool = False) -> PublishJobRecord:
         job_path = self._find_job_path(job_id)
-        job = PublishJobRecord.model_validate_json(job_path.read_text(encoding="utf-8"))
+        job = self._load_job(job_path)
         _validate_publish_assets(job)
-        job.status = "ready" if not launch_browser else "launched"
+        job.status = "ready" if not launch_browser else "browser_opened"
         job.started_at = datetime.now().isoformat(timespec="seconds")
         if launch_browser:
             subprocess.run(["cmd", "/c", "start", "", job.publish_url], check=True)
@@ -204,7 +212,7 @@ class PublishManager:
         keep_open: bool = False,
     ) -> PublishJobRecord:
         job_path = self._find_job_path(job_id)
-        job = PublishJobRecord.model_validate_json(job_path.read_text(encoding="utf-8"))
+        job = self._load_job(job_path)
         if job.platform_type != "music":
             raise RuntimeError(f"Automation skeleton currently supports music jobs only: {job.platform}")
         _validate_publish_assets(job)
@@ -224,15 +232,15 @@ class PublishManager:
         if keep_open:
             command.append("--keep-open")
         subprocess.run(command, check=True)
-        job.status = "automation_ran"
+        job.status = "saved_for_review"
         job.started_at = datetime.now().isoformat(timespec="seconds")
         self._save_job(job_path, job)
-        log_step(f"Executed music automation skeleton for {job.job_id}")
+        log_step(f"Executed music automation flow for {job.job_id}")
         return job
 
     def complete_job(self, job_id: str, external_post_id: str = "") -> PublishJobRecord:
         job_path = self._find_job_path(job_id)
-        job = PublishJobRecord.model_validate_json(job_path.read_text(encoding="utf-8"))
+        job = self._load_job(job_path)
         job.status = "completed"
         job.completed_at = datetime.now().isoformat(timespec="seconds")
         job.external_post_id = external_post_id
@@ -242,18 +250,43 @@ class PublishManager:
 
     def fail_job(self, job_id: str, reason: str) -> PublishJobRecord:
         job_path = self._find_job_path(job_id)
-        job = PublishJobRecord.model_validate_json(job_path.read_text(encoding="utf-8"))
+        job = self._load_job(job_path)
         job.status = "failed"
         job.notes = reason
         self._save_job(job_path, job)
         log_step(f"Marked publish job {job.job_id} failed: {reason}")
         return job
 
+    def _iter_job_paths(self) -> list[Path]:
+        jobs_root = ensure_dir(self.config.publish_dir / "jobs")
+        return sorted(jobs_root.glob("pub_*.json"))
+
     def _find_job_path(self, job_id: str) -> Path:
         job_path = self.config.publish_dir / "jobs" / f"{job_id}.json"
         if not job_path.exists():
             raise FileNotFoundError(f"Publish job not found: {job_id}")
         return job_path
+
+    def _load_job(self, job_path: Path) -> PublishJobRecord:
+        raw_text = job_path.read_text(encoding="utf-8")
+        raw_data = json.loads(raw_text)
+        job = PublishJobRecord.model_validate(raw_data)
+        changed = False
+        if raw_data.get("status") != job.status:
+            changed = True
+        raw_video_path = raw_data.get("video_path")
+        normalized_video_path = str(job.video_path) if job.video_path else None
+        if raw_video_path in {".", "", "null"} and normalized_video_path is None:
+            changed = True
+        if job.status not in PUBLISH_JOB_STATUSES:
+            job.status = "pending"
+            changed = True
+        if job.platform_type == "music" and job.video_path is not None:
+            job.video_path = None
+            changed = True
+        if changed:
+            self._save_job(job_path, job)
+        return job
 
     def _save_job(self, job_path: Path, job: PublishJobRecord) -> None:
         write_json(job_path, job.model_dump(mode="json"))
