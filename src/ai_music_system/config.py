@@ -29,6 +29,8 @@ def load_app_config(project_root: Path) -> AppConfig:
         cover_publish_size=pipeline.get("cover_publish_size", 1440),
         cover_hd_size=pipeline.get("cover_hd_size", 3000),
         skip_existing_steps=pipeline.get("skip_existing_steps", True),
+        target_platform=pipeline.get("target_platform", pipeline.get("default_publish_platform", "douyin")),
+        prompt_version=pipeline.get("prompt_version", "v1"),
         lyrics_provider=_build_lyrics_provider_config(providers["lyrics_provider"]),
         music_provider=_build_music_provider_config(providers["music_provider"]),
         image_provider=_build_image_provider_config(providers["image_provider"]),

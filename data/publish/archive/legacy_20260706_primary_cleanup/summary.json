@@ -1,0 +1,338 @@
+{
+  "archive_label": "legacy_20260706_primary_cleanup",
+  "archived_at": "2026-07-06T22:02:28",
+  "archive_dir": "F:\\code\\ai_music_traffic_system\\data\\publish\\archive\\legacy_20260706_primary_cleanup",
+  "job_count": 55,
+  "jobs": [
+    {
+      "job_id": "pub_bilibili_song_20260705_001_20260705_194816",
+      "platform": "bilibili",
+      "status": "completed",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_bilibili_song_20260705_001_20260705_213434",
+      "platform": "bilibili",
+      "status": "completed",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_bilibili_song_20260705_101_20260705_194827",
+      "platform": "bilibili",
+      "status": "completed",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_bilibili_song_20260705_101_20260705_213500",
+      "platform": "bilibili",
+      "status": "completed",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_bilibili_song_20260705_102_20260705_194839",
+      "platform": "bilibili",
+      "status": "completed",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_bilibili_song_20260705_102_20260705_213526",
+      "platform": "bilibili",
+      "status": "completed",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_bilibili_song_20260705_103_20260705_194853",
+      "platform": "bilibili",
+      "status": "completed",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_bilibili_song_20260705_103_20260705_213600",
+      "platform": "bilibili",
+      "status": "completed",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_douyin_song_20260705_001_20260705_090746",
+      "platform": "douyin",
+      "status": "failed",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_douyin_song_20260705_001_20260705_090829",
+      "platform": "douyin",
+      "status": "failed",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_douyin_song_20260705_001_20260705_194809",
+      "platform": "douyin",
+      "status": "failed",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_douyin_song_20260705_001_20260705_213418",
+      "platform": "douyin",
+      "status": "failed",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_douyin_song_20260705_101_20260705_194822",
+      "platform": "douyin",
+      "status": "failed",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_douyin_song_20260705_101_20260705_213448",
+      "platform": "douyin",
+      "status": "failed",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_douyin_song_20260705_102_20260705_194833",
+      "platform": "douyin",
+      "status": "failed",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_douyin_song_20260705_102_20260705_213512",
+      "platform": "douyin",
+      "status": "failed",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_douyin_song_20260705_103_20260705_194846",
+      "platform": "douyin",
+      "status": "failed",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_douyin_song_20260705_103_20260705_213542",
+      "platform": "douyin",
+      "status": "failed",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_fanqie_music_song_20260705_001_20260705_095605",
+      "platform": "fanqie_music",
+      "status": "ready",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_fanqie_music_song_20260705_001_20260705_095656",
+      "platform": "fanqie_music",
+      "status": "saved_for_review",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_fanqie_music_song_20260705_001_20260705_194819",
+      "platform": "fanqie_music",
+      "status": "under_review",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_fanqie_music_song_20260705_001_20260705_213441",
+      "platform": "fanqie_music",
+      "status": "under_review",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_fanqie_music_song_20260705_101_20260705_194830",
+      "platform": "fanqie_music",
+      "status": "saved_for_review",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_fanqie_music_song_20260705_101_20260705_213506",
+      "platform": "fanqie_music",
+      "status": "under_review",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_fanqie_music_song_20260705_102_20260705_194842",
+      "platform": "fanqie_music",
+      "status": "under_review",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_fanqie_music_song_20260705_102_20260705_213533",
+      "platform": "fanqie_music",
+      "status": "under_review",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_fanqie_music_song_20260705_103_20260705_194857",
+      "platform": "fanqie_music",
+      "status": "under_review",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_fanqie_music_song_20260705_103_20260705_213609",
+      "platform": "fanqie_music",
+      "status": "under_review",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_kuaishou_song_20260705_001_20260705_090749",
+      "platform": "kuaishou",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_kuaishou_song_20260705_001_20260705_090832",
+      "platform": "kuaishou",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_kuaishou_song_20260705_001_20260705_194812",
+      "platform": "kuaishou",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_kuaishou_song_20260705_001_20260705_213426",
+      "platform": "kuaishou",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_kuaishou_song_20260705_101_20260705_194825",
+      "platform": "kuaishou",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_kuaishou_song_20260705_101_20260705_213454",
+      "platform": "kuaishou",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_kuaishou_song_20260705_102_20260705_194836",
+      "platform": "kuaishou",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_kuaishou_song_20260705_102_20260705_213519",
+      "platform": "kuaishou",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_kuaishou_song_20260705_103_20260705_194850",
+      "platform": "kuaishou",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_kuaishou_song_20260705_103_20260705_213551",
+      "platform": "kuaishou",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_qishui_music_song_20260705_001_20260705_095605",
+      "platform": "qishui_music",
+      "status": "saved_for_review",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_qishui_music_song_20260705_001_20260705_194819",
+      "platform": "qishui_music",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_qishui_music_song_20260705_001_20260705_213441",
+      "platform": "qishui_music",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_qishui_music_song_20260705_101_20260705_194830",
+      "platform": "qishui_music",
+      "status": "saved_for_review",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_qishui_music_song_20260705_101_20260705_213506",
+      "platform": "qishui_music",
+      "status": "under_review",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_qishui_music_song_20260705_102_20260705_194842",
+      "platform": "qishui_music",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_qishui_music_song_20260705_102_20260705_213533",
+      "platform": "qishui_music",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_qishui_music_song_20260705_103_20260705_194857",
+      "platform": "qishui_music",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_qishui_music_song_20260705_103_20260705_213609",
+      "platform": "qishui_music",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_xiaohongshu_song_20260705_001_20260705_194819",
+      "platform": "xiaohongshu",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_xiaohongshu_song_20260705_001_20260705_213441",
+      "platform": "xiaohongshu",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_xiaohongshu_song_20260705_101_20260705_194830",
+      "platform": "xiaohongshu",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_xiaohongshu_song_20260705_101_20260705_213506",
+      "platform": "xiaohongshu",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_xiaohongshu_song_20260705_102_20260705_194842",
+      "platform": "xiaohongshu",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_xiaohongshu_song_20260705_102_20260705_213533",
+      "platform": "xiaohongshu",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_xiaohongshu_song_20260705_103_20260705_194857",
+      "platform": "xiaohongshu",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    },
+    {
+      "job_id": "pub_xiaohongshu_song_20260705_103_20260705_213609",
+      "platform": "xiaohongshu",
+      "status": "pending",
+      "traceability_state": "legacy_partial"
+    }
+  ]
+}

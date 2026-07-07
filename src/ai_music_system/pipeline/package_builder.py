@@ -5,14 +5,20 @@ import json
 import shutil
 from pathlib import Path
 
-from ..models import ReviewRecord, SongRecord, TopicRecord
+from ..models import AppConfig, ReviewRecord, SongRecord, TopicRecord
 
 
-def build_song_metadata(song: SongRecord, topic: TopicRecord) -> dict:
+def build_song_metadata(song: SongRecord, topic: TopicRecord, config: AppConfig) -> dict:
+    music_release_profile = ""
+    if topic.distribution_target == "music_platform":
+        music_release_profile = "full_song_emotion_release"
     return {
+        "run_id": song.run_id,
         "song_id": song.song_id,
         "topic_id": song.topic_id,
         "batch_id": song.batch_id,
+        "prompt_version": song.prompt_version or config.prompt_version,
+        "target_platform": config.target_platform,
         "title": song.title,
         "topic": topic.topic,
         "audience": topic.audience,
@@ -20,8 +26,38 @@ def build_song_metadata(song: SongRecord, topic: TopicRecord) -> dict:
         "scene": topic.scene,
         "style_hint": topic.style_hint,
         "publish_platform": topic.publish_platform,
+        "distribution_target": topic.distribution_target,
+        "music_release_profile": music_release_profile,
         "mode": song.mode,
         "status": song.status,
+        "generated_at": song.generated_at,
+        "provider_lyrics": {
+            "name": config.lyrics_provider.name,
+            "model": config.lyrics_provider.model,
+            "base_url": config.lyrics_provider.base_url,
+        },
+        "provider_music": {
+            "name": config.music_provider.name,
+            "model": config.music_provider.model,
+            "cover_model": config.music_provider.cover_model,
+            "base_url": config.music_provider.base_url,
+        },
+        "provider_image": {
+            "name": config.image_provider.name,
+            "model": config.image_provider.model,
+            "base_url": config.image_provider.base_url,
+        },
+        "paths": {
+            "song_dir": str(song.song_dir),
+            "lyrics_raw_path": str(song.lyrics_raw_path),
+            "lyrics_clean_path": str(song.lyrics_clean_path),
+            "audio_path": str(song.audio_path),
+            "cover_raw_path": str(song.cover_raw_path),
+            "cover_publish_path": str(song.cover_publish_path),
+            "cover_hd_path": str(song.cover_hd_path),
+            "caption_path": str(song.caption_path),
+            "review_path": str(song.review_path),
+        },
     }
 
 
@@ -60,9 +96,13 @@ def write_export_manifest(export_root: Path, entries: list[dict]) -> tuple[Path,
     manifest_csv = export_root / "publish_manifest.csv"
     manifest_json.write_text(json.dumps(entries, ensure_ascii=False, indent=2), encoding="utf-8")
     fieldnames = [
+        "run_id",
         "song_id",
         "title",
         "batch_id",
+        "prompt_version",
+        "target_platform",
+        "review_source",
         "publishable",
         "hook_score",
         "vocal_score",
@@ -80,11 +120,24 @@ def write_export_manifest(export_root: Path, entries: list[dict]) -> tuple[Path,
     return manifest_json, manifest_csv
 
 
+def write_export_summary(export_root: Path, summary: dict) -> Path:
+    summary_path = export_root / "export_summary.json"
+    summary_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
+    return summary_path
+
+
 def build_publish_manifest_entry(song: SongRecord, review: ReviewRecord, exported_dir: Path) -> dict:
+    target_platform = ""
+    if song.meta_path.exists():
+        target_platform = json.loads(song.meta_path.read_text(encoding="utf-8")).get("target_platform", "")
     return {
+        "run_id": song.run_id,
         "song_id": song.song_id,
         "title": song.title,
         "batch_id": song.batch_id,
+        "prompt_version": song.prompt_version,
+        "target_platform": target_platform,
+        "review_source": review.review_source,
         "publishable": review.publishable,
         "hook_score": review.hook_score,
         "vocal_score": review.vocal_score,

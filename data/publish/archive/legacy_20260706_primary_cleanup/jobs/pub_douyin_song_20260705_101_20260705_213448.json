@@ -1,0 +1,40 @@
+{
+  "job_id": "pub_douyin_song_20260705_101_20260705_213448",
+  "song_id": "song_20260705_101",
+  "batch_id": "batch_20260705_new_song",
+  "run_id": "legacy_missing_run_id:song_20260705_101",
+  "prompt_version": "v1",
+  "target_platform": "douyin",
+  "review_source": "legacy_missing_review_source",
+  "platform": "douyin",
+  "platform_type": "video",
+  "status": "failed",
+  "package_dir": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_101\\douyin",
+  "video_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_101\\douyin\\publish_video.mp4",
+  "cover_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_101\\douyin\\cover_publish.png",
+  "audio_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_101\\douyin\\audio.mp3",
+  "caption_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_101\\douyin\\publish_text.txt",
+  "lyrics_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_101\\douyin\\lyrics_clean.txt",
+  "meta_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_101\\douyin\\meta.json",
+  "publish_url": "https://creator.douyin.com/creator-micro/content/upload",
+  "title": "便利店雨夜",
+  "caption": "下雨天路过以前常去的便利店，是不是也像你心里那句一直没说出口的话。 《便利店雨夜》 #AI音乐 #情绪歌曲...",
+  "scheduled_at": "",
+  "created_at": "2026-07-05T21:34:48",
+  "started_at": "",
+  "completed_at": "",
+  "external_post_id": "",
+  "status_history": [
+    {
+      "status": "pending",
+      "timestamp": "2026-07-05T21:34:48",
+      "reason": "legacy_job_imported"
+    },
+    {
+      "status": "failed",
+      "timestamp": "2026-07-06T20:45:38",
+      "reason": "Platform rejected upload"
+    }
+  ],
+  "notes": "Platform rejected upload"
+}

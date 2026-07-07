@@ -1,0 +1,2 @@
+topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url,distribution_target
+tp_20260705_101,batch_20260705_new_song,下雨天路过以前常去的便利店,18-30岁情绪向流行音乐听众,克制伤感,深夜一个人躲雨回家,中文流行抒情,douyin,pending,text_to_music,,hybrid

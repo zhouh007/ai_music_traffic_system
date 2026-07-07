@@ -1,0 +1,3 @@
+topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url,distribution_target
+tp_20260705_102,batch_20260705_compare,凌晨回家时路灯下想起你,18-30岁情绪向流行音乐听众,失落克制,凌晨一个人走回出租屋,中文流行抒情,douyin,pending,text_to_music,,hybrid
+tp_20260705_103,batch_20260705_compare,地铁最后一班车坐过了站,18-30岁都市情绪音乐听众,疲惫遗憾,加班后的深夜通勤,中文流行抒情,douyin,pending,text_to_music,,hybrid

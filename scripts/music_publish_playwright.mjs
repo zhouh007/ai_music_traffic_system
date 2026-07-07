@@ -166,6 +166,12 @@ async function run() {
 
   const payloadPath = path.join(job.package_dir, "publish_payload.json");
   const payload = readJson(payloadPath);
+  const releaseBrief = payload.release_brief_path && fs.existsSync(payload.release_brief_path)
+    ? readJson(payload.release_brief_path)
+    : null;
+  const operatorChecklist = payload.operator_checklist_path && fs.existsSync(payload.operator_checklist_path)
+    ? fs.readFileSync(payload.operator_checklist_path, "utf-8")
+    : "";
   const targetUrl = selectors.publish_entry_url || job.publish_url;
   console.log(`[music-upload] opening ${targetUrl}`);
   await page.goto(targetUrl, { waitUntil: "networkidle" });
@@ -188,6 +194,12 @@ async function run() {
   const summary = {
     platform: job.platform,
     mode: args.submit ? "explicit_submit_test" : "safe_semi_auto",
+    releaseBriefLoaded: Boolean(releaseBrief),
+    operatorChecklistLoaded: Boolean(operatorChecklist.trim()),
+    releaseSummary: releaseBrief?.release_summary || "",
+    operatorChecklistPreview: operatorChecklist.trim()
+      ? operatorChecklist.split("\n").slice(0, 3)
+      : [],
     fullTrackReady: false,
     audioUploaded: false,
     coverUploaded: false,
@@ -197,6 +209,11 @@ async function run() {
     draftClicked: false,
     submitClicked: false,
     humanReviewRequired: true,
+    nextManualChecks: [
+      "Review release_brief.json against the intended audience and scene.",
+      "Check uploaded cover, lyrics, and publish text before final submit.",
+      "Record under_review or failed outcome after manual confirmation.",
+    ],
   };
 
   if (Array.isArray(selectors.full_track_buttons) && selectors.full_track_buttons.length > 0) {
@@ -232,6 +249,10 @@ async function run() {
 
   if (!args.submit) {
     console.log("[music-upload] semi-auto mode: final submit intentionally skipped for manual review");
+    if (operatorChecklist.trim()) {
+      console.log("[music-upload] operator checklist:");
+      console.log(operatorChecklist);
+    }
   }
 
   const outputPath = path.join(job.package_dir, "automation_last_run.json");

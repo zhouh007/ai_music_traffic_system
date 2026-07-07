@@ -1,0 +1,35 @@
+{
+  "job_id": "pub_qishui_music_song_20260705_101_20260705_213506",
+  "song_id": "song_20260705_101",
+  "batch_id": "batch_20260705_new_song",
+  "run_id": "legacy_missing_run_id:song_20260705_101",
+  "prompt_version": "v1",
+  "target_platform": "douyin",
+  "review_source": "legacy_missing_review_source",
+  "platform": "qishui_music",
+  "platform_type": "music",
+  "status": "under_review",
+  "package_dir": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_101\\qishui_music",
+  "video_path": null,
+  "cover_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_101\\qishui_music\\cover_publish.png",
+  "audio_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_101\\qishui_music\\audio.mp3",
+  "caption_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_101\\qishui_music\\publish_text.txt",
+  "lyrics_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_101\\qishui_music\\lyrics_clean.txt",
+  "meta_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_101\\qishui_music\\meta.json",
+  "publish_url": "https://music.douyin.com/",
+  "title": "便利店雨夜",
+  "caption": "下雨天路过以前常去的便利店，是不是也像你心里那句一直没说出口的话。 《便利店雨夜》 #AI音乐 #情绪歌曲 #短视频BGM #原创音乐 #氛围感",
+  "scheduled_at": "",
+  "created_at": "2026-07-05T21:35:06",
+  "started_at": "2026-07-05T23:42:37",
+  "completed_at": "",
+  "external_post_id": "",
+  "status_history": [
+    {
+      "status": "under_review",
+      "timestamp": "2026-07-05T23:42:37",
+      "reason": "legacy_job_imported"
+    }
+  ],
+  "notes": "Submitted on 2026-07-05 via music.douyin.com semi-automatic flow; platform status is under review."
+}

@@ -1,0 +1,35 @@
+{
+  "job_id": "pub_kuaishou_song_20260705_101_20260705_194825",
+  "song_id": "song_20260705_101",
+  "batch_id": "batch_20260705_new_song",
+  "run_id": "legacy_missing_run_id:song_20260705_101",
+  "prompt_version": "v1",
+  "target_platform": "douyin",
+  "review_source": "legacy_missing_review_source",
+  "platform": "kuaishou",
+  "platform_type": "video",
+  "status": "pending",
+  "package_dir": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_101\\kuaishou",
+  "video_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_101\\kuaishou\\publish_video.mp4",
+  "cover_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_101\\kuaishou\\cover_publish.png",
+  "audio_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_101\\kuaishou\\audio.mp3",
+  "caption_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_101\\kuaishou\\publish_text.txt",
+  "lyrics_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_101\\kuaishou\\lyrics_clean.txt",
+  "meta_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_101\\kuaishou\\meta.json",
+  "publish_url": "https://cp.kuaishou.com/article/publish/video",
+  "title": "下雨天路过以前常去的便利",
+  "caption": "下雨天路过以前常去的便利店，是不是也像你心里那句一直没说出口的话。 《下雨天路过以前常去的便利》 #AI音乐 #情绪歌曲 #短视频BGM #情绪短片 #氛围感",
+  "scheduled_at": "",
+  "created_at": "2026-07-05T19:48:25",
+  "started_at": "",
+  "completed_at": "",
+  "external_post_id": "",
+  "status_history": [
+    {
+      "status": "pending",
+      "timestamp": "2026-07-05T19:48:25",
+      "reason": "legacy_job_imported"
+    }
+  ],
+  "notes": "Prepared from approved export manifest"
+}

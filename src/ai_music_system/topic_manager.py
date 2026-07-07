@@ -5,6 +5,7 @@ from datetime import datetime
 from pathlib import Path
 
 from .models import TopicRecord
+from .platform_profiles import infer_distribution_target
 
 
 TOPIC_FIELDNAMES = [
@@ -56,6 +57,7 @@ def build_topic_record(
     reference_audio_url: str = "",
     distribution_target: str = "hybrid",
 ) -> TopicRecord:
+    normalized_distribution_target = infer_distribution_target(distribution_target, publish_platform)
     return TopicRecord(
         topic_id=f"tp_{datetime.now():%Y%m%d}_{index:03d}",
         batch_id=batch_id,
@@ -68,5 +70,5 @@ def build_topic_record(
         status="pending",
         generation_mode=generation_mode.strip() or "text_to_music",
         reference_audio_url=reference_audio_url.strip(),
-        distribution_target=distribution_target.strip() or "hybrid",
+        distribution_target=normalized_distribution_target,
     )

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime
 from pathlib import Path
 
 from .http import JsonHttpClient
@@ -81,9 +82,15 @@ class BatchOrchestrator:
             )
 
             song.status = "generated"
-            write_json(song.meta_path, build_song_metadata(song, topic))
+            song.generated_at = datetime.now().isoformat(timespec="seconds")
+            write_json(song.meta_path, build_song_metadata(song, topic, self.config))
             write_text(song.caption_path, build_caption(song, topic))
-            save_default_review(song.review_path, song.song_id)
+            save_default_review(
+                song.review_path,
+                song.song_id,
+                run_id=song.run_id,
+                prompt_version=song.prompt_version,
+            )
             log_step(f"Finished song {song.song_id}")
         except Exception as exc:
             song.status = "failed"
@@ -118,7 +125,7 @@ class BatchOrchestrator:
             publish_size=self.config.cover_publish_size,
             hd_size=self.config.cover_hd_size,
         )
-        write_json(song.meta_path, build_song_metadata(song, topic))
+        write_json(song.meta_path, build_song_metadata(song, topic, self.config))
         write_text(song.caption_path, build_caption(song, topic))
         write_json(song.song_dir / "song.json", song.model_dump(mode="json"))
         log_step(f"Refined title for {song.song_id} -> {song.title}")
@@ -130,7 +137,12 @@ class BatchOrchestrator:
         if not topic_path.exists():
             raise FileNotFoundError(f"Topic file not found for song: {song_id}")
         topic = TopicRecord.model_validate_json(topic_path.read_text(encoding="utf-8"))
-        song = self._build_song_record(song_id, topic, song_dir)
+        song_path = song_dir / "song.json"
+        song = (
+            SongRecord.model_validate_json(song_path.read_text(encoding="utf-8"))
+            if song_path.exists()
+            else self._build_song_record(song_id, topic, song_dir)
+        )
         requested_step = step.strip().lower()
         log_step(f"Retrying {requested_step} for {song_id}")
         if requested_step == "all":
@@ -159,7 +171,9 @@ class BatchOrchestrator:
                 hd_size=self.config.cover_hd_size,
             )
         if requested_step == "package":
-            write_json(song.meta_path, build_song_metadata(song, topic))
+            if not song.generated_at:
+                song.generated_at = datetime.now().isoformat(timespec="seconds")
+            write_json(song.meta_path, build_song_metadata(song, topic, self.config))
             write_text(song.caption_path, build_caption(song, topic))
         song.status = "generated"
         write_json(song.song_dir / "song.json", song.model_dump(mode="json"))
@@ -170,6 +184,8 @@ class BatchOrchestrator:
             song_id=song_id,
             topic_id=topic.topic_id,
             batch_id=topic.batch_id,
+            run_id=f"run_{datetime.now():%Y%m%d_%H%M%S}_{song_id}",
+            prompt_version=self.config.prompt_version,
             title=topic.topic.strip()[:12] if len(topic.topic.strip()) > 12 else topic.topic.strip(),
             mode=topic.generation_mode or "text_to_music",
             status="running",

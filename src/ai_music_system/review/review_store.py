@@ -6,8 +6,19 @@ from pathlib import Path
 from ..models import ReviewRecord
 
 
-def save_default_review(review_path: Path, song_id: str) -> ReviewRecord:
-    review = ReviewRecord(song_id=song_id)
+def save_default_review(
+    review_path: Path,
+    song_id: str,
+    run_id: str = "",
+    prompt_version: str = "",
+) -> ReviewRecord:
+    review = ReviewRecord(
+        song_id=song_id,
+        run_id=run_id,
+        prompt_version=prompt_version,
+        review_source="system",
+        score_evidence={"reason": "default_review_placeholder"},
+    )
     save_review(review_path, review)
     return review
 

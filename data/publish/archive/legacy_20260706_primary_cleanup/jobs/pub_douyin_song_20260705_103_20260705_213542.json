@@ -1,0 +1,40 @@
+{
+  "job_id": "pub_douyin_song_20260705_103_20260705_213542",
+  "song_id": "song_20260705_103",
+  "batch_id": "batch_20260705_compare",
+  "run_id": "legacy_missing_run_id:song_20260705_103",
+  "prompt_version": "v1",
+  "target_platform": "douyin",
+  "review_source": "legacy_missing_review_source",
+  "platform": "douyin",
+  "platform_type": "video",
+  "status": "failed",
+  "package_dir": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_103\\douyin",
+  "video_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_103\\douyin\\publish_video.mp4",
+  "cover_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_103\\douyin\\cover_publish.png",
+  "audio_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_103\\douyin\\audio.mp3",
+  "caption_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_103\\douyin\\publish_text.txt",
+  "lyrics_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_103\\douyin\\lyrics_clean.txt",
+  "meta_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_103\\douyin\\meta.json",
+  "publish_url": "https://creator.douyin.com/creator-micro/content/upload",
+  "title": "坐过站的人",
+  "caption": "地铁最后一班车坐过了站，是不是也像你心里那句一直没说出口的话。 《坐过站的人》 #AI音乐 #情绪歌曲 #短...",
+  "scheduled_at": "",
+  "created_at": "2026-07-05T21:35:42",
+  "started_at": "",
+  "completed_at": "",
+  "external_post_id": "",
+  "status_history": [
+    {
+      "status": "pending",
+      "timestamp": "2026-07-05T21:35:42",
+      "reason": "legacy_job_imported"
+    },
+    {
+      "status": "failed",
+      "timestamp": "2026-07-06T20:45:38",
+      "reason": "Platform rejected upload"
+    }
+  ],
+  "notes": "Platform rejected upload"
+}

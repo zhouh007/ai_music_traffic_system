@@ -1,0 +1,45 @@
+{
+  "job_id": "pub_bilibili_song_20260705_001_20260705_213434",
+  "song_id": "song_20260705_001",
+  "batch_id": "batch_20260705_live",
+  "run_id": "legacy_missing_run_id:song_20260705_001",
+  "prompt_version": "v1",
+  "target_platform": "douyin",
+  "review_source": "legacy_missing_review_source",
+  "platform": "bilibili",
+  "platform_type": "video",
+  "status": "completed",
+  "package_dir": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_001\\bilibili",
+  "video_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_001\\bilibili\\publish_video.mp4",
+  "cover_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_001\\bilibili\\cover_publish.png",
+  "audio_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_001\\bilibili\\audio.mp3",
+  "caption_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_001\\bilibili\\publish_text.txt",
+  "lyrics_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_001\\bilibili\\lyrics_clean.txt",
+  "meta_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_001\\bilibili\\meta.json",
+  "publish_url": "https://member.bilibili.com/platform/upload/video/frame",
+  "title": "深夜翻到前任聊天记录",
+  "caption": "深夜翻到前任聊天记录，是不是也像你心里那句一直没说出口的话。 《深夜翻到前任聊天记录》 #AI音乐 #情绪歌曲 #短视频BGM #原创音乐 #短片配乐",
+  "scheduled_at": "",
+  "created_at": "2026-07-05T21:34:34",
+  "started_at": "2026-07-06T07:39:48",
+  "completed_at": "2026-07-06T20:50:54",
+  "external_post_id": "",
+  "status_history": [
+    {
+      "status": "ready",
+      "timestamp": "2026-07-06T07:39:48",
+      "reason": "assets_validated"
+    },
+    {
+      "status": "under_review",
+      "timestamp": "2026-07-06T07:50:15",
+      "reason": "batch_marked_under_review"
+    },
+    {
+      "status": "completed",
+      "timestamp": "2026-07-06T20:50:54",
+      "reason": "batch_marked_completed"
+    }
+  ],
+  "notes": "Batch review marker"
+}

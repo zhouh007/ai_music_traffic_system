@@ -1,0 +1,35 @@
+{
+  "job_id": "pub_xiaohongshu_song_20260705_001_20260705_213441",
+  "song_id": "song_20260705_001",
+  "batch_id": "batch_20260705_live",
+  "run_id": "legacy_missing_run_id:song_20260705_001",
+  "prompt_version": "v1",
+  "target_platform": "douyin",
+  "review_source": "legacy_missing_review_source",
+  "platform": "xiaohongshu",
+  "platform_type": "video",
+  "status": "pending",
+  "package_dir": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_001\\xiaohongshu",
+  "video_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_001\\xiaohongshu\\publish_video.mp4",
+  "cover_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_001\\xiaohongshu\\cover_publish.png",
+  "audio_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_001\\xiaohongshu\\audio.mp3",
+  "caption_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_001\\xiaohongshu\\publish_text.txt",
+  "lyrics_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_001\\xiaohongshu\\lyrics_clean.txt",
+  "meta_path": "F:\\code\\ai_music_traffic_system\\data\\publish\\packages\\song_20260705_001\\xiaohongshu\\meta.json",
+  "publish_url": "https://creator.xiaohongshu.com/publish/publish",
+  "title": "深夜翻到前任聊天记录",
+  "caption": "深夜翻到前任聊天记录，是不是也像你心里那句一直没说出口的话。 《深夜翻到前任聊天记录》 #AI音乐 #情绪歌曲 #短视频BGM #情绪文案 #治愈BGM",
+  "scheduled_at": "",
+  "created_at": "2026-07-05T21:34:41",
+  "started_at": "",
+  "completed_at": "",
+  "external_post_id": "",
+  "status_history": [
+    {
+      "status": "pending",
+      "timestamp": "2026-07-05T21:34:41",
+      "reason": "legacy_job_imported"
+    }
+  ],
+  "notes": "Prepared from approved export manifest"
+}

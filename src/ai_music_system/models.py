@@ -24,9 +24,12 @@ class SongRecord(BaseModel):
     song_id: str
     topic_id: str
     batch_id: str
+    run_id: str = ""
+    prompt_version: str = ""
     title: str
     mode: str
     status: str
+    generated_at: str = ""
     song_dir: Path
     lyrics_raw_path: Path
     lyrics_clean_path: Path
@@ -42,10 +45,14 @@ class SongRecord(BaseModel):
 
 class ReviewRecord(BaseModel):
     song_id: str
+    run_id: str = ""
+    prompt_version: str = ""
     hook_score: int = Field(default=0, ge=0, le=5)
     vocal_score: int = Field(default=0, ge=0, le=5)
     cover_score: int = Field(default=0, ge=0, le=5)
     publishable: bool = False
+    review_source: str = "system"
+    score_evidence: dict = Field(default_factory=dict)
     notes: str = ""
     reviewed_at: str = ""
 
@@ -54,6 +61,10 @@ class PublishJobRecord(BaseModel):
     job_id: str
     song_id: str
     batch_id: str
+    run_id: str = ""
+    prompt_version: str = ""
+    target_platform: str = ""
+    review_source: str = ""
     platform: str
     platform_type: str = "video"
     status: str = "pending"
@@ -72,6 +83,8 @@ class PublishJobRecord(BaseModel):
     started_at: str = ""
     completed_at: str = ""
     external_post_id: str = ""
+    automation_summary: dict = Field(default_factory=dict)
+    status_history: list[dict] = Field(default_factory=list)
     notes: str = ""
 
     @model_validator(mode="before")
@@ -105,6 +118,8 @@ class AppConfig(BaseModel):
     cover_publish_size: int = 1440
     cover_hd_size: int = 3000
     skip_existing_steps: bool = True
+    target_platform: str = "douyin"
+    prompt_version: str = "v1"
     lyrics_provider: "LyricsProviderConfig"
     music_provider: "MusicProviderConfig"
     image_provider: "ImageProviderConfig"

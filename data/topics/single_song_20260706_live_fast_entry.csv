@@ -1,0 +1,2 @@
+topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url,distribution_target
+tp_20260706_202,batch_20260706_live_song,凌晨三点把你头像从置顶取消,18-30岁都市情绪流行听众,克制心碎,失眠夜里一个人盯着聊天框,中文流行抒情女声，副歌提前，短前奏，尽快进人声,douyin,pending,text_to_music,,music_platform

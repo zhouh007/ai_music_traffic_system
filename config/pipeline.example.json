@@ -1,6 +1,8 @@
 {
   "default_batch_id_prefix": "batch",
   "default_publish_platform": "douyin",
+  "target_platform": "douyin",
+  "prompt_version": "v1",
   "cover_publish_size": 1440,
   "cover_hd_size": 3000,
   "auto_retry_count": 1,

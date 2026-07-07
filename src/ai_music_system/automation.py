@@ -6,6 +6,7 @@ from pathlib import Path
 
 from .models import ReviewRecord, SongRecord, TopicRecord
 from .orchestrator import BatchOrchestrator
+from .platform_profiles import is_music_platform_target
 from .pipeline.package_builder import (
     build_publish_manifest_entry,
     export_approved_song,
@@ -193,25 +194,38 @@ class AutomationService:
             topic = TopicRecord.model_validate_json(topic_path.read_text(encoding="utf-8"))
             review = load_review(review_path) if review_path.exists() else ReviewRecord(song_id=song.song_id)
             metrics = _evaluate_song(song, topic)
-            total_score = metrics["hook_score"] + metrics["vocal_score"] + metrics["cover_score"]
+            total_score = metrics["total_score"]
             if song.status == "generated" and total_score >= min_total_score:
+                review.run_id = song.run_id
+                review.prompt_version = song.prompt_version
                 review.hook_score = metrics["hook_score"]
                 review.vocal_score = metrics["vocal_score"]
                 review.cover_score = metrics["cover_score"]
                 review.publishable = True
+                review.review_source = "auto_filter"
+                review.score_evidence = metrics["evidence"]
                 review.notes = metrics["notes"]
                 save_review(review_path, review)
                 approved.append(song.song_id)
                 shortlisted.append(
-                    {"song_id": song.song_id, "batch_id": song.batch_id, "total_score": total_score}
+                    {
+                        "song_id": song.song_id,
+                        "batch_id": song.batch_id,
+                        "run_id": song.run_id,
+                        "prompt_version": song.prompt_version,
+                        "total_score": total_score,
+                    }
                 )
             else:
                 skipped.append(
                     {
                         "song_id": song.song_id,
                         "batch_id": song.batch_id,
+                        "run_id": song.run_id,
+                        "prompt_version": song.prompt_version,
                         "status": song.status,
                         "total_score": total_score,
+                        "evidence": metrics["evidence"],
                     }
                 )
         summary = {
@@ -299,18 +313,47 @@ def _evaluate_song(song: SongRecord, topic: TopicRecord) -> dict:
     lyrics_length = len(song.lyrics_clean_path.read_text(encoding="utf-8")) if song.lyrics_clean_path.exists() else 0
     audio_exists = song.audio_path.exists() and song.audio_path.stat().st_size > 10_000
     cover_exists = song.cover_publish_path.exists() and song.cover_publish_path.stat().st_size > 1_000
-    hook_score = 5 if 80 <= lyrics_length <= 800 else 3 if lyrics_length > 0 else 0
+    music_platform_target = is_music_platform_target(topic.distribution_target, topic.publish_platform)
+    if music_platform_target:
+        structure_score = 5 if 180 <= lyrics_length <= 900 else 2 if lyrics_length > 0 else 0
+    else:
+        structure_score = 5 if 80 <= lyrics_length <= 800 else 3 if lyrics_length > 0 else 0
+    platform_fit_score = 5 if topic.distribution_target in {"short_video", "hybrid", "music_platform"} else 3
+    duration_risk = music_platform_target and lyrics_length < 180
+    if duration_risk:
+        platform_fit_score = max(1, platform_fit_score - 2)
+    hook_score = min(5, round((structure_score + platform_fit_score) / 2))
     vocal_score = 5 if audio_exists else 0
     cover_score = 5 if cover_exists else 0
+    total_score = hook_score + vocal_score + cover_score
     notes = (
         f"Auto filtered for {topic.publish_platform}; "
-        f"lyrics_length={lyrics_length}, audio_exists={audio_exists}, cover_exists={cover_exists}"
+        f"lyrics_length={lyrics_length}, audio_exists={audio_exists}, cover_exists={cover_exists}, "
+        f"music_platform_target={music_platform_target}, duration_risk={duration_risk}"
     )
     return {
         "hook_score": hook_score,
         "vocal_score": vocal_score,
         "cover_score": cover_score,
+        "total_score": total_score,
         "notes": notes,
+        "evidence": {
+            "publish_platform": topic.publish_platform,
+            "distribution_target": topic.distribution_target,
+            "music_platform_target": music_platform_target,
+            "lyrics_length": lyrics_length,
+            "audio_exists": audio_exists,
+            "cover_exists": cover_exists,
+            "duration_risk": duration_risk,
+            "score_breakdown": {
+                "structure_score": structure_score,
+                "platform_fit_score": platform_fit_score,
+                "hook_score": hook_score,
+                "vocal_score": vocal_score,
+                "cover_score": cover_score,
+                "total_score": total_score,
+            },
+        },
     }
 
 
