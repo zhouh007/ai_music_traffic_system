@@ -144,6 +144,7 @@ Music-platform generation expectations:
 - healing / late-night songs should still lift slightly emotionally rather than staying flat
 - line lengths should stay singable and rhythmically even for AI vocal generation
 - the first lines of the chorus should also work well as a `10-20` second shareable snippet
+- title generation should balance platform clarity with release-grade subtlety: easy to remember, but still emotionally specific and not slogan-like
 
 Short-video generation expectations:
 
