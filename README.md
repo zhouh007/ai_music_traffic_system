@@ -98,6 +98,13 @@ MiniMax note:
 - use `generation_mode=reference_audio` only when you have a valid `reference_audio_url`
 - use `distribution_target=short_video|hybrid|music_platform` to steer lyrics structure by release goal
 - use `config/pipeline.local.json` to override `target_platform` and `prompt_version` for the current release strategy
+- `music_platform_intro_max_seconds` can enforce a maximum allowed lead-vocal entry time for music-platform songs
+- `music_platform_min_duration_seconds` defines the hard minimum acceptable music-platform song length
+- `music_platform_preferred_min_duration_seconds` documents the preferred lower bound for longform release quality
+- `music_platform_max_duration_seconds` defines an upper bound to catch unexpectedly long outputs
+- `music_platform_retry_count` controls how many automatic music regenerations are allowed when the intro is too long
+- `music_platform_retry_target_vocal_seconds` makes retry prompts stricter than the final hard threshold
+- `music_platform_retry_target_duration_seconds` makes retry prompts ask for a longer full-song result than the hard minimum
 
 ### 4. Prepare topics
 
@@ -130,6 +137,13 @@ Music-platform generation expectations:
 - preferred duration range should usually be `3:00-4:00`
 - vocal entry should usually arrive within about `2-3` seconds
 - avoid long instrumental intros when the target is a formal music-platform release
+- generated audio is now checked after creation, and tracks with lead vocals entering after the configured intro limit are regenerated automatically
+- generated audio duration is also checked after creation, and tracks that land outside the configured music-platform duration window are regenerated automatically
+- chorus should contain a short repeatable hook that is memorable on first listen
+- verses should lean on concrete everyday imagery instead of abstract emotional filler
+- healing / late-night songs should still lift slightly emotionally rather than staying flat
+- line lengths should stay singable and rhythmically even for AI vocal generation
+- the first lines of the chorus should also work well as a `10-20` second shareable snippet
 
 Short-video generation expectations:
 

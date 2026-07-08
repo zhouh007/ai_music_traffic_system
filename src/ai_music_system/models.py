@@ -117,6 +117,13 @@ class AppConfig(BaseModel):
     publish_dir: Path
     cover_publish_size: int = 1440
     cover_hd_size: int = 3000
+    music_platform_intro_max_seconds: float = 15.0
+    music_platform_min_duration_seconds: float = 165.0
+    music_platform_preferred_min_duration_seconds: float = 180.0
+    music_platform_max_duration_seconds: float = 240.0
+    music_platform_retry_count: int = 4
+    music_platform_retry_target_vocal_seconds: float = 8.0
+    music_platform_retry_target_duration_seconds: float = 180.0
     skip_existing_steps: bool = True
     target_platform: str = "douyin"
     prompt_version: str = "v1"
