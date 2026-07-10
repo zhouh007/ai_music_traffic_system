@@ -1,0 +1,2 @@
+topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url,distribution_target
+tp_20260710_221,batch_20260710_cover_prompt_validation,"在忙完一天回到房间以后，慢慢把心安顿下来，提醒自己今天已经很努力了，明天再继续也来得及","喜欢治愈流行、舒缓陪伴感、适合完整单曲循环的汽水音乐与番茄音乐用户","安静、柔和、被接住、轻微上扬","傍晚到夜里，一个人回到房间，灯光暖起来，风从窗边进来，情绪慢慢放松","中文治愈流行单曲，适合汽水音乐和番茄音乐发布，允许自然短前奏但人声最晚15秒内进入，旋律清晰，副歌有记忆点，整体真实温柔，不要鸡汤感",qishui_music,pending,text_to_music,,music_platform

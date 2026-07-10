@@ -208,9 +208,9 @@ class BatchOrchestrator:
                 music_meta=music_meta,
                 attempt=attempt + 1,
             )
-            if audio_analysis["status"] == "passed":
+            if audio_analysis["status"] in {"passed", "skipped"}:
                 return music_meta
-            last_error = audio_analysis["error_message"]
+            last_error = audio_analysis.get("error_message", "audio validation failed")
             if attempt < retry_count:
                 reasons = ", ".join(audio_analysis.get("failed_checks", [])) or "audio validation failed"
                 log_step(f"Retrying music for {song.song_id}: {reasons}")

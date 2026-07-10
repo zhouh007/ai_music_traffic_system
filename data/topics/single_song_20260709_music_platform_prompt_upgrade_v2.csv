@@ -1,0 +1,2 @@
+topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url,distribution_target
+tp_20260709_220,batch_20260709_music_platform_prompt_upgrade_v2,"在关系结束后的一段时间里，一个人慢慢把生活重新接回手里，不再急着痊愈，只是先学会好好过今天","喜欢有生活画面、能反复单曲循环的汽水音乐与番茄音乐用户","平静起步，带余痛，但慢慢松开，最后有一点轻微上扬","傍晚到夜里，一个人回到住处，收拾房间、整理小东西，在很日常的动作里慢慢和自己和解","中文流行单曲，适合汽水音乐和番茄音乐发布，允许自然短前奏但人声最晚15秒内进入，画面感强，副歌有高记忆点，避免鸡汤感，偏成熟真实叙事",qishui_music,pending,text_to_music,,music_platform

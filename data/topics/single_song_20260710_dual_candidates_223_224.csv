@@ -1,0 +1,3 @@
+topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url,distribution_target
+tp_20260710_223,batch_20260710_dual_candidates_223_224,"傍晚风吹进房间的时候，忽然觉得今天没那么难了，想写一首让人慢慢放松下来的歌","喜欢晚风感、轻治愈、适合汽水音乐和番茄音乐完整聆听的用户","柔和、清爽、松弛、轻微上扬","傍晚回到房间，把窗打开，风吹动窗帘，天还亮着一点，整个人慢慢缓下来","中文治愈流行单曲，适合汽水音乐和番茄音乐发布，允许自然短前奏但人声最晚15秒内进入，旋律清晰，副歌有记忆点，真实口语化，不要鸡汤感",qishui_music,pending,text_to_music,,music_platform
+tp_20260710_224,batch_20260710_dual_candidates_223_224,"在忙完一天以后，一个人坐下来整理情绪，决定先别逼自己想太多，明天再继续","喜欢深夜陪伴感、生活流叙事、适合完整单曲循环的汽水音乐和番茄音乐用户","安静、克制、被接住、慢慢松开","夜里房间只开一盏暖灯，水壶响了，手机静音，窗外有风，人在很普通的动作里慢慢松下来","中文治愈流行单曲，适合汽水音乐和番茄音乐发布，允许自然短前奏但人声最晚15秒内进入，旋律清晰，副歌有高记忆点，生活化画面强，避免空泛抒情",qishui_music,pending,text_to_music,,music_platform

@@ -1,0 +1,2 @@
+topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url,distribution_target
+tp_20260710_222,batch_20260710_new_candidate_222,"下班回家后的夜里，把一天的疲惫慢慢放下，不急着变好，只想先让自己安静下来","喜欢治愈流行、生活化画面、适合完整单曲循环的汽水音乐与番茄音乐用户","柔和、松弛、安静、有一点点重新恢复元气的感觉","夜里回到房间，洗完脸，烧一壶水，把窗开一点，外面有风，房间慢慢安静下来","中文治愈流行单曲，适合汽水音乐和番茄音乐发布，允许自然短前奏但人声最晚15秒内进入，旋律清晰，副歌有高记忆点，真实、口语化、不要鸡汤感",qishui_music,pending,text_to_music,,music_platform

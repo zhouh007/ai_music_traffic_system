@@ -1,0 +1,2 @@
+topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url,distribution_target
+tp_20260709_219,batch_20260709_music_platform_prompt_upgrade,"在情绪快撑不住的夜里，决定不再继续假装没事，慢慢把自己重新接住","喜欢治愈流行和完整单曲叙事的汽水音乐与番茄音乐用户","克制起步并逐渐抬升，真诚，带一点被自己接住的温暖","深夜快天亮的房间里一个人坐着整理情绪，最后决定继续往前","中文治愈流行单曲，适合汽水音乐和番茄音乐发布，允许自然短前奏但人声最晚15秒内进入，旋律清晰，副歌强记忆点，画面感强",qishui_music,pending,text_to_music,,music_platform

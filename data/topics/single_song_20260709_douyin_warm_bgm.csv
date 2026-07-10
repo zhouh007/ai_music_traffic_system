@@ -1,0 +1,2 @@
+topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url,distribution_target
+"tp_20260709_401","batch_20260709_douyin_warm_bgm","写一首适合抖音发布的中文温馨自愈系BGM歌曲，让人一听就有被轻轻安慰到的感觉","喜欢抖音温柔治愈内容、生活记录、夜晚情绪短视频的用户","温暖轻柔、治愈自愈、松弛舒服","一个人慢慢过日子，吹晚风、看路灯、吃热饭，也能把普通生活过得很柔软","原创中文温馨治愈向短视频BGM歌曲，前奏极短，前3秒必须进入清晰人声或强记忆点，副歌第一遍就要上口，句子短，重复性强，适合10到20秒切片循环，整体氛围温柔明亮，不苦情，编曲以钢琴、木吉他、轻鼓点和柔和铺底为主，时长可偏短，重点是抖音传播感和情绪陪伴感","douyin","pending","text_to_music","","short_video"
