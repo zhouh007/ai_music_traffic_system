@@ -7,6 +7,7 @@ from pathlib import Path
 
 from .automation import AutomationService
 from .config import load_app_config
+from .experiments import ExperimentStore
 from .models import ReviewRecord, SongRecord
 from .orchestrator import BatchOrchestrator
 from .pipeline.package_builder import (
@@ -16,6 +17,7 @@ from .pipeline.package_builder import (
     write_export_summary,
 )
 from .publish_manager import PublishManager
+from .performance import PerformanceStore
 from .review.review_store import load_review, save_review
 from .storage.file_store import ensure_dir
 from .storage.run_log import log_step
@@ -28,6 +30,38 @@ def main() -> None:
 
     run_batch_parser = subparsers.add_parser("run-batch", help="Run generation for a topics CSV file")
     run_batch_parser.add_argument("--topics-file", required=True)
+
+    performance_parser = subparsers.add_parser("performance-record", help="Record a manual platform metrics snapshot")
+    performance_parser.add_argument("--song-id", required=True)
+    performance_parser.add_argument("--platform", required=True)
+    performance_parser.add_argument("--window", default="manual")
+    performance_parser.add_argument("--external-post-id", default="")
+    performance_parser.add_argument("--views", type=int, default=0)
+    performance_parser.add_argument("--complete-rate", type=float)
+    performance_parser.add_argument("--likes", type=int, default=0)
+    performance_parser.add_argument("--favorites", type=int, default=0)
+    performance_parser.add_argument("--shares", type=int, default=0)
+    performance_parser.add_argument("--followers-gained", type=int, default=0)
+    performance_parser.add_argument("--revenue", type=float, default=0)
+    performance_parser.add_argument("--notes", default="")
+    performance_summary = subparsers.add_parser("performance-summary", help="Summarize latest manual platform metrics")
+    performance_summary.add_argument("--platform")
+    performance_summary.add_argument("--song-id")
+
+    experiment_create = subparsers.add_parser("experiment-create", help="Create a controlled prompt experiment")
+    experiment_create.add_argument("--name", required=True)
+    experiment_create.add_argument("--hypothesis", required=True)
+    experiment_create.add_argument("--variable", required=True)
+    experiment_create.add_argument("--control-prompt-version", required=True)
+    experiment_create.add_argument("--variant-prompt-version", required=True)
+    experiment_create.add_argument("--primary-metric", required=True)
+    experiment_create.add_argument("--minimum-sample-size", type=int, default=5)
+    experiment_create.add_argument("--notes", default="")
+    experiment_update = subparsers.add_parser("experiment-update", help="Update experiment status or attach songs")
+    experiment_update.add_argument("--experiment-id", required=True)
+    experiment_update.add_argument("--status", choices=["draft", "running", "completed", "cancelled"])
+    experiment_update.add_argument("--song-ids", default="")
+    subparsers.add_parser("experiment-list", help="List controlled experiments")
 
     export_parser = subparsers.add_parser("export-approved", help="Export approved songs")
     export_parser.add_argument("--songs-dir", default="data/songs")
@@ -254,6 +288,27 @@ def main() -> None:
     config = load_app_config(project_root)
     automation = AutomationService(project_root, config)
     publish_manager = PublishManager(project_root, config)
+    performance_store = PerformanceStore(config.data_dir)
+    experiment_store = ExperimentStore(config.data_dir)
+
+    if args.command == "performance-record":
+        record = performance_store.record(song_id=args.song_id, platform=args.platform, window=args.window, external_post_id=args.external_post_id, views=args.views, complete_rate=args.complete_rate, likes=args.likes, favorites=args.favorites, shares=args.shares, followers_gained=args.followers_gained, revenue=args.revenue, notes=args.notes)
+        print(record.model_dump_json(indent=2))
+        return
+    if args.command == "performance-summary":
+        print(json.dumps(performance_store.summarize(platform=args.platform, song_id=args.song_id), ensure_ascii=False, indent=2))
+        return
+    if args.command == "experiment-create":
+        record = experiment_store.create(name=args.name, hypothesis=args.hypothesis, variable=args.variable, control_prompt_version=args.control_prompt_version, variant_prompt_version=args.variant_prompt_version, primary_metric=args.primary_metric, minimum_sample_size=args.minimum_sample_size, notes=args.notes)
+        print(record.model_dump_json(indent=2))
+        return
+    if args.command == "experiment-update":
+        record = experiment_store.update(args.experiment_id, args.status, [value.strip() for value in args.song_ids.split(",") if value.strip()])
+        print(record.model_dump_json(indent=2))
+        return
+    if args.command == "experiment-list":
+        print(json.dumps(experiment_store.list(), ensure_ascii=False, indent=2))
+        return
 
     if args.command == "run-batch":
         _run_batch(project_root, config, Path(args.topics_file))

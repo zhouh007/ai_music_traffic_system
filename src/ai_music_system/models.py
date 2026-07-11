@@ -121,7 +121,6 @@ class AppConfig(BaseModel):
     music_platform_min_duration_seconds: float = 165.0
     music_platform_preferred_min_duration_seconds: float = 180.0
     music_platform_max_duration_seconds: float = 240.0
-    music_platform_retry_count: int = 4
     music_platform_retry_target_vocal_seconds: float = 8.0
     music_platform_retry_target_duration_seconds: float = 180.0
     skip_existing_steps: bool = True
@@ -130,6 +129,37 @@ class AppConfig(BaseModel):
     lyrics_provider: "LyricsProviderConfig"
     music_provider: "MusicProviderConfig"
     image_provider: "ImageProviderConfig"
+
+
+class PerformanceRecord(BaseModel):
+    song_id: str
+    platform: str
+    captured_at: str
+    window: str = "manual"
+    external_post_id: str = ""
+    views: int = Field(default=0, ge=0)
+    complete_rate: float | None = Field(default=None, ge=0, le=1)
+    likes: int = Field(default=0, ge=0)
+    favorites: int = Field(default=0, ge=0)
+    shares: int = Field(default=0, ge=0)
+    followers_gained: int = Field(default=0, ge=0)
+    revenue: float = Field(default=0, ge=0)
+    notes: str = ""
+
+
+class ExperimentRecord(BaseModel):
+    experiment_id: str
+    name: str
+    hypothesis: str
+    variable: str
+    control_prompt_version: str
+    variant_prompt_version: str
+    primary_metric: str
+    minimum_sample_size: int = Field(default=5, ge=1)
+    status: str = "draft"
+    created_at: str
+    song_ids: list[str] = Field(default_factory=list)
+    notes: str = ""
 
 
 class ProviderBaseConfig(BaseModel):

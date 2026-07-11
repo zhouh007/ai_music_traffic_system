@@ -4,6 +4,7 @@ from datetime import datetime
 from pathlib import Path
 
 from .audio_review import detect_first_vocal_entry
+from .cover_strategy import format_cover_prompt
 from .http import JsonHttpClient
 from .lyrics_prompting import load_lyrics_prompt
 from .models import SongRecord, TopicRecord
@@ -37,15 +38,27 @@ class BatchOrchestrator:
         write_json(song.song_dir / "topic.json", topic.model_dump())
         try:
             lyrics_prompt, prompt_variant = load_lyrics_prompt(self.project_root, topic)
-            raw_lyrics, used_prompt, lyrics_response = self.lyrics_provider.generate_lyrics(topic, lyrics_prompt)
             write_text(song.song_dir / "lyrics_prompt_variant.txt", prompt_variant)
-            write_text(song.song_dir / "lyrics_prompt.txt", used_prompt)
+            lyrics_input_path = song.song_dir / "lyrics_input.txt"
+            if lyrics_input_path.exists():
+                raw_lyrics = lyrics_input_path.read_text(encoding="utf-8")
+                write_text(song.song_dir / "lyrics_prompt.txt", "Local lyrics input; external lyrics provider skipped.\n")
+                write_json(song.song_dir / "lyrics_response.json", {"source": "local_input", "path": str(lyrics_input_path)})
+            else:
+                raw_lyrics, used_prompt, lyrics_response = self.lyrics_provider.generate_lyrics(topic, lyrics_prompt)
+                write_text(song.song_dir / "lyrics_prompt.txt", used_prompt)
+                write_json(song.song_dir / "lyrics_response.json", lyrics_response)
             write_text(song.lyrics_raw_path, raw_lyrics)
-            write_json(song.song_dir / "lyrics_response.json", lyrics_response)
 
             clean_lyrics = normalize_lyrics(raw_lyrics)
             write_text(song.lyrics_clean_path, clean_lyrics)
-            refined_title, title_prompt, title_response = self.lyrics_provider.refine_title(topic, clean_lyrics)
+            title_input_path = song.song_dir / "title_input.txt"
+            if title_input_path.exists():
+                refined_title = title_input_path.read_text(encoding="utf-8").strip()
+                title_prompt = "Local title input; external title provider skipped."
+                title_response = {"source": "local_input", "path": str(title_input_path)}
+            else:
+                refined_title, title_prompt, title_response = self.lyrics_provider.refine_title(topic, clean_lyrics)
             song.title = refined_title
             write_text(song.song_dir / "title_prompt.txt", title_prompt)
             write_json(song.song_dir / "title_response.json", title_response)
@@ -56,13 +69,9 @@ class BatchOrchestrator:
             cover_prompt_template = (
                 self.project_root / "src" / "ai_music_system" / "prompts" / "cover_prompt.txt"
             ).read_text(encoding="utf-8")
-            cover_prompt = cover_prompt_template.format(
-                topic=topic.topic,
-                mood=topic.mood,
-                scene=topic.scene,
-                style_hint=topic.style_hint,
-            )
+            cover_prompt, cover_direction = format_cover_prompt(cover_prompt_template, song, topic, clean_lyrics)
             write_text(song.song_dir / "cover_prompt.txt", cover_prompt)
+            write_json(song.song_dir / "cover_direction.json", cover_direction)
             cover_meta = self.image_provider.generate_cover(cover_prompt, song.cover_raw_path)
             write_json(song.song_dir / "cover_response.json", cover_meta)
 
@@ -145,7 +154,11 @@ class BatchOrchestrator:
             clean_lyrics = song.lyrics_clean_path.read_text(encoding="utf-8")
             self._generate_music_with_validation(song=song, topic=topic, lyrics=clean_lyrics)
         if requested_step == "cover":
-            cover_prompt = (song.song_dir / "cover_prompt.txt").read_text(encoding="utf-8")
+            lyrics = song.lyrics_clean_path.read_text(encoding="utf-8")
+            cover_prompt_template = (self.project_root / "src" / "ai_music_system" / "prompts" / "cover_prompt.txt").read_text(encoding="utf-8")
+            cover_prompt, cover_direction = format_cover_prompt(cover_prompt_template, song, topic, lyrics)
+            write_text(song.song_dir / "cover_prompt.txt", cover_prompt)
+            write_json(song.song_dir / "cover_direction.json", cover_direction)
             cover_meta = self.image_provider.generate_cover(cover_prompt, song.cover_raw_path)
             write_json(song.song_dir / "cover_response.json", cover_meta)
             render_publish_covers(
@@ -188,7 +201,8 @@ class BatchOrchestrator:
         )
 
     def _generate_music_with_validation(self, *, song: SongRecord, topic: TopicRecord, lyrics: str) -> dict:
-        retry_count = max(0, int(self.config.music_platform_retry_count))
+        # Keep provider spend predictable: one initial attempt plus at most two retries.
+        retry_count = 2
         last_error = ""
         for attempt in range(retry_count + 1):
             style_hint = self._build_music_style_hint(topic.style_hint, attempt)
@@ -303,9 +317,9 @@ class BatchOrchestrator:
         baseline_rules = (
             "\n\nMusic-platform composition requirements:\n"
             "- this must feel like a complete release-ready full song, not a short clip\n"
-            "- target total duration should be at least 165 seconds and preferably around 180-240 seconds\n"
+            "- target total duration is 195-220 seconds; do not finish before 180 seconds\n"
             "- stable lead vocal should enter as early as possible and should not drift into a long instrumental intro\n"
-            "- keep a real verse / chorus / bridge / final chorus payoff rather than collapsing into a short loop\n"
+            "- keep two full verses, two choruses, an 8-bar instrumental interlude, a complete bridge, a repeated final chorus, and a short outro\n"
             "- avoid underdeveloped structure, ambient-only opening, or short-video BGM pacing"
         )
         enriched_hint = base_style_hint + baseline_rules
@@ -316,7 +330,8 @@ class BatchOrchestrator:
         extra_rules = (
             "\n\nRetry requirement for music-platform release:\n"
             f"- stable lead vocal must enter within {target_vocal_seconds:.0f} seconds\n"
-            f"- total song duration should be at least {target_duration_seconds:.0f} seconds\n"
+            "- total song duration must target 200-220 seconds and must not finish before 180 seconds\n"
+            "- include an 8-bar instrumental interlude and repeat the complete final chorus before a short outro\n"
             "- do not generate a long instrumental-only intro\n"
             "- do not delay the first sung lyric line behind ambience or cinematic build-up\n"
             "- do not collapse the song into a short clip or underdeveloped structure\n"

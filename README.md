@@ -102,7 +102,7 @@ MiniMax note:
 - `music_platform_min_duration_seconds` defines the hard minimum acceptable music-platform song length
 - `music_platform_preferred_min_duration_seconds` documents the preferred lower bound for longform release quality
 - `music_platform_max_duration_seconds` defines an upper bound to catch unexpectedly long outputs
-- `music_platform_retry_count` controls how many automatic music regenerations are allowed when the intro is too long
+- music-platform generation uses a fixed maximum of two retries to keep the workflow simple and predictable
 - `music_platform_retry_target_vocal_seconds` makes retry prompts stricter than the final hard threshold
 - `music_platform_retry_target_duration_seconds` makes retry prompts ask for a longer full-song result than the hard minimum
 
@@ -158,6 +158,13 @@ Short-video generation expectations:
 ```powershell
 python -m ai_music_system.cli run-batch --topics-file data/topics/topics_master.csv
 ```
+
+To use human-written lyrics without an external lyrics model, create these files before running:
+
+- `data/songs/<song_id>/lyrics_input.txt` (required)
+- `data/songs/<song_id>/title_input.txt` (optional; avoids external title generation too)
+
+The remaining music, cover, packaging, and quality-validation steps stay automatic.
 
 ### 6. Export approved songs
 
@@ -229,6 +236,25 @@ python -m ai_music_system.cli auto-filter --batch-id batch_20260705_live --min-t
 ```powershell
 python -m ai_music_system.cli process-batch --topics-file data/topics/live_batch.csv --auto-filter --export-approved
 ```
+
+### 15.1 Record platform performance manually
+
+```powershell
+python -m ai_music_system.cli performance-record --song-id song_001 --platform fanqie_music --window 7d --views 120 --favorites 8 --shares 2
+python -m ai_music_system.cli performance-summary --platform fanqie_music
+```
+
+Snapshots are append-only under `data/performance/records`. Summaries use the latest snapshot for each platform/song pair.
+
+### 15.2 Manage controlled experiments
+
+```powershell
+python -m ai_music_system.cli experiment-create --name "Earlier hook" --hypothesis "An earlier chorus increases favorites" --variable "chorus timing" --control-prompt-version v2 --variant-prompt-version v3 --primary-metric favorites
+python -m ai_music_system.cli experiment-update --experiment-id exp_20260711_120000 --status running --song-ids song_001,song_002
+python -m ai_music_system.cli experiment-list
+```
+
+Change one declared variable per experiment. Experiment definitions are stored under `data/experiments`.
 
 ### 16. Create multi-platform publish jobs from an approved export
 

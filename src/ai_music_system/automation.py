@@ -6,7 +6,7 @@ from pathlib import Path
 
 from .models import ReviewRecord, SongRecord, TopicRecord
 from .orchestrator import BatchOrchestrator
-from .platform_profiles import is_music_platform_target
+from .quality import evaluate_quality
 from .pipeline.package_builder import (
     build_publish_manifest_entry,
     export_approved_song,
@@ -193,9 +193,9 @@ class AutomationService:
                 continue
             topic = TopicRecord.model_validate_json(topic_path.read_text(encoding="utf-8"))
             review = load_review(review_path) if review_path.exists() else ReviewRecord(song_id=song.song_id)
-            metrics = _evaluate_song(song, topic)
+            metrics = evaluate_quality(song, topic)
             total_score = metrics["total_score"]
-            if song.status == "generated" and total_score >= min_total_score:
+            if song.status == "generated" and metrics["hard_gate_passed"] and total_score >= min_total_score:
                 review.run_id = song.run_id
                 review.prompt_version = song.prompt_version
                 review.hook_score = metrics["hook_score"]
@@ -309,7 +309,7 @@ def _parse_json_block(raw_content: str) -> object:
     return json.loads(text)
 
 
-def _evaluate_song(song: SongRecord, topic: TopicRecord) -> dict:
+def _legacy_evaluate_song(song: SongRecord, topic: TopicRecord) -> dict:
     lyrics_length = len(song.lyrics_clean_path.read_text(encoding="utf-8")) if song.lyrics_clean_path.exists() else 0
     audio_exists = song.audio_path.exists() and song.audio_path.stat().st_size > 10_000
     cover_exists = song.cover_publish_path.exists() and song.cover_publish_path.stat().st_size > 1_000

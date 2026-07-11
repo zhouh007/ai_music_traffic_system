@@ -1,0 +1,2 @@
+topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url,distribution_target
+tp_20260711_402,batch_20260711_dual_platform_402,"下了一夜的雨终于停了，清晨走出门时空气很新，昨晚想不通的事情也没有那么沉重了，决定从今天重新开始","喜欢清新民谣流行、生活感叙事，适合汽水音乐和番茄音乐完整聆听的年轻用户","清新、释然、温暖、向前","雨后清晨的街道，屋檐还在滴水，早餐店刚开门，树叶发亮，鞋底踩过浅浅水洼","中文清新民谣流行完整单曲，温暖自然女声，木吉他与轻鼓为主，人声5秒内进入，旋律有行进感，副歌第一句直接形成标题记忆点，歌词具象口语化，情绪从雨夜后的疲惫走向重新出发",qishui_music,pending,text_to_music,,music_platform

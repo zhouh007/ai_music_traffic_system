@@ -1,0 +1,2 @@
+topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url,distribution_target
+tp_20260711_401,batch_20260711_dual_platform_401,"忙完一天回到房间，推开窗时晚风吹进来，忽然发现今天的疲惫可以先放下，明天再慢慢继续","喜欢治愈流行、生活感叙事，适合汽水音乐和番茄音乐完整聆听的年轻用户","温暖、松弛、清爽、微微向上","夜晚刚回到家，窗帘被风吹动，桌上有一杯水，城市声音渐远，人在普通生活细节里慢慢平静下来","中文治愈流行完整单曲，女声温暖清澈，旋律简洁易记，人声最晚5秒内进入，副歌前两句形成可重复记忆点，歌词口语自然且有具体生活画面，情绪从疲惫逐渐走向轻松，适合汽水音乐和番茄音乐发布",qishui_music,pending,text_to_music,,music_platform

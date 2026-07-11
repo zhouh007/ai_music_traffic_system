@@ -331,6 +331,17 @@ Do not absorb yet:
 
 ## Change Rule
 
+## Current Product Loop Upgrade
+
+The current implementation priority is:
+
+1. manually record platform performance snapshots before platform traffic is large enough for automated collection
+2. require objective hard quality gates before automatic approval
+3. represent prompt experiments explicitly with one declared variable and a primary metric
+4. cap music-platform regeneration at two retries
+
+Large CLI or storage refactors remain deferred until these product loops produce useful operating evidence.
+
 New features should answer one question first:
 
 Does this help us ship or stabilize the publishable workflow?

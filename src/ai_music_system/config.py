@@ -32,7 +32,6 @@ def load_app_config(project_root: Path) -> AppConfig:
         music_platform_min_duration_seconds=pipeline.get("music_platform_min_duration_seconds", 165),
         music_platform_preferred_min_duration_seconds=pipeline.get("music_platform_preferred_min_duration_seconds", 180),
         music_platform_max_duration_seconds=pipeline.get("music_platform_max_duration_seconds", 240),
-        music_platform_retry_count=pipeline.get("music_platform_retry_count", 4),
         music_platform_retry_target_vocal_seconds=pipeline.get("music_platform_retry_target_vocal_seconds", 8),
         music_platform_retry_target_duration_seconds=pipeline.get("music_platform_retry_target_duration_seconds", 180),
         skip_existing_steps=pipeline.get("skip_existing_steps", True),
