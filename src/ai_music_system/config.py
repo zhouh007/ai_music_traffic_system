@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import tomllib
 from pathlib import Path
 
 from .models import AppConfig, ImageProviderConfig, LyricsProviderConfig, MusicProviderConfig
@@ -91,8 +92,8 @@ def _build_image_provider_config(payload: dict) -> ImageProviderConfig:
     return ImageProviderConfig(
         name=payload["name"],
         api_key=_resolve_api_key_from_payload(payload),
-        base_url=payload.get("base_url", "https://apihub.agnes-ai.com/v1"),
-        model=payload.get("model", "agnes-image-2.0-flash"),
+        base_url=payload.get("base_url", "https://www.codex2api.com"),
+        model=payload.get("model", "gpt-image-1.5"),
         size=payload.get("size", "1024x1024"),
         return_base64=payload.get("return_base64", False),
         timeout_seconds=payload.get("timeout_seconds", 180),
@@ -104,9 +105,29 @@ def _resolve_api_key_from_payload(payload: dict) -> str:
     if direct_value:
         return direct_value
     env_name = str(payload.get("api_key_env", "")).strip()
+    if not env_name and payload.get("name") == "codex2api":
+        return _resolve_codex_api_key()
     if not env_name:
         raise RuntimeError("Provider config requires either api_key or api_key_env.")
+    value = os.getenv(env_name, "").strip()
+    if value:
+        return value
+    if payload.get("name") == "codex2api":
+        return _resolve_codex_api_key()
     return _resolve_api_key(env_name)
+
+
+def _resolve_codex_api_key() -> str:
+    config_path = Path(os.getenv("CODEX_CONFIG_PATH", str(Path.home() / ".codex" / "config.toml")))
+    if not config_path.exists():
+        raise RuntimeError(f"Codex config not found: {config_path}")
+    config = tomllib.loads(config_path.read_text(encoding="utf-8"))
+    provider_name = config.get("model_provider", "custom")
+    provider = config.get("model_providers", {}).get(provider_name, {})
+    token = str(provider.get("experimental_bearer_token") or provider.get("api_key") or "").strip()
+    if not token:
+        raise RuntimeError(f"Codex provider has no bearer token: {provider_name}")
+    return token
 
 
 def _resolve_api_key(env_name: str) -> str:

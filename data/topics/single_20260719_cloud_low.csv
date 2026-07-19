@@ -1,0 +1,2 @@
+topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url,distribution_target
+tp_20260719_cloud_001,batch_20260719_cloud,云在低处,喜欢自然意象与慢速治愈音乐的音乐平台听众,安静温暖,雨后山谷与湖面,慢速治愈系中文流行,fanqie_music,pending,text_to_music,,music_platform

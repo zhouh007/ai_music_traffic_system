@@ -1,0 +1,2 @@
+topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url,distribution_target
+tp_20260716_travel_guofeng_003,batch_20260716_travel_guofeng_003,"背上行囊沿着古道去看山河，在陌生小镇与风和晚霞相遇", "喜欢旅行、国风流行、公路感和治愈系风景短片的年轻听众", "明亮、自由、温暖、带一点少年感", "清晨车站、古道、雪山、湖泊、草原、山城晚霞", "原创国风旅行流行歌，明亮有律动，木吉他、钢琴、笛子、琵琶与鼓组融合；主歌有出发感，副歌适合旅行 Vlog 和公路 MV，歌词短句易跟唱，画面包含车窗、风、山河、篝火与并肩的人；前奏不超过6秒，完整时长目标200到240秒", qishui_music, pending, text_to_music,, music_platform

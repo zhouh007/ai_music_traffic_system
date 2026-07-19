@@ -1,0 +1,2 @@
+topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url,distribution_target
+tp_20260715_guofeng_mv_001,batch_20260715_guofeng_mv_001,"月下长街的纸灯突然熄灭，少女提灯穿过雪夜去见守城归来的少年", "喜欢国风流行、古风叙事、电影感 MV 和高记忆点副歌的年轻听众", "清冷、浪漫、燃起希望", "雪夜古城、城楼、长街纸灯、白马、河面倒影", "原创国风流行完整单曲，副歌必须具备独立 MV 画面感：雪落长街、纸灯逐盏亮起、人物奔跑与回眸、城楼烟火和河面倒影，歌词短句有强动作与镜头切换；琵琶、笛子、钢琴、弦乐与鼓融合，副歌第一句抓耳并适合重复，前奏不超过8秒，完整时长目标200到240秒", qishui_music, pending, text_to_music,, music_platform

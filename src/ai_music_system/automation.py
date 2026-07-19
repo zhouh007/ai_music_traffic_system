@@ -42,6 +42,12 @@ class AutomationService:
                 "scene": item.scene,
                 "style_hint": item.style_hint,
                 "publish_platform": item.publish_platform,
+                "user_need": item.user_need,
+                "core_conflict": item.core_conflict,
+                "unique_observation": item.unique_observation,
+                "emotional_payoff": item.emotional_payoff,
+                "visual_scene": item.visual_scene,
+                "series_name": item.series_name,
             }
             for item in source_topics[: min(len(source_topics), 8)]
         ]
@@ -50,7 +56,8 @@ class AutomationService:
             "Based on the seed topics below, generate new Chinese short-video song topics.\n"
             "Return JSON only. The format must be an array.\n"
             f"Generate exactly {output_count} items.\n"
-            "Each item must contain: topic, audience, mood, scene, style_hint, publish_platform.\n"
+            "Each item must contain: topic, audience, mood, scene, style_hint, publish_platform, "
+            "user_need, core_conflict, unique_observation, emotional_payoff, visual_scene, series_name.\n"
             "Keep items practical for short-form traffic content and avoid repeating seed wording.\n"
             f"Seed topics: {json.dumps(seed_rows, ensure_ascii=False)}"
         )
@@ -91,6 +98,12 @@ class AutomationService:
                     publish_platform=str(
                         item.get("publish_platform", source_topics[0].publish_platform)
                     ).strip(),
+                    user_need=str(item.get("user_need", "")).strip(),
+                    core_conflict=str(item.get("core_conflict", "")).strip(),
+                    unique_observation=str(item.get("unique_observation", "")).strip(),
+                    emotional_payoff=str(item.get("emotional_payoff", "")).strip(),
+                    visual_scene=str(item.get("visual_scene", "")).strip(),
+                    series_name=str(item.get("series_name", "")).strip(),
                 )
             )
         if len(topics) < output_count:

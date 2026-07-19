@@ -25,8 +25,17 @@ def build_song_metadata(song: SongRecord, topic: TopicRecord, config: AppConfig)
         "mood": topic.mood,
         "scene": topic.scene,
         "style_hint": topic.style_hint,
+        "style_tag": topic.style_tag,
         "publish_platform": topic.publish_platform,
         "distribution_target": topic.distribution_target,
+        "creative_brief": {
+            "user_need": topic.user_need,
+            "core_conflict": topic.core_conflict,
+            "unique_observation": topic.unique_observation,
+            "emotional_payoff": topic.emotional_payoff,
+            "visual_scene": topic.visual_scene,
+            "series_name": topic.series_name,
+        },
         "music_release_profile": music_release_profile,
         "mode": song.mode,
         "status": song.status,
@@ -62,6 +71,17 @@ def build_song_metadata(song: SongRecord, topic: TopicRecord, config: AppConfig)
 
 
 def build_caption(song: SongRecord, topic: TopicRecord) -> str:
+    return (
+        f"{topic.topic}\uFF0C{chr(0x662F)}{chr(0x4E0D)}{chr(0x662F)}{chr(0x4E5F)}{chr(0x50CF)}{chr(0x4F60)}{chr(0x5FC3)}{chr(0x91CC)}{chr(0x90A3)}{chr(0x53E5)}{chr(0x4E00)}{chr(0x76F4)}{chr(0x6CA1)}{chr(0x8BF4)}{chr(0x51FA)}{chr(0x53E3)}{chr(0x7684)}{chr(0x8BDD)}{chr(0xFF1F)}\n"
+        f"\u300A{song.title}\u300B\n"
+        "#AI\u97F3\u4E50 #\u60C5\u7EEA\u6B4C\u66F2 #\u77ED\u89C6\u9891BGM"
+    )
+    # Keep the default caption readable even when legacy source assets contain mojibake.
+    return (
+        f"{topic.topic}，是不是也像你心里那句一直没说出口的话？\n"
+        f"《{song.title}》\n"
+        "#AI音乐 #情绪歌曲 #短视频BGM"
+    )
     return (
         f"{topic.topic}，是不是也像你心里那句一直没说出口的话。\n"
         f"《{song.title}》\n"

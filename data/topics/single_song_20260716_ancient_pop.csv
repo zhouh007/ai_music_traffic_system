@@ -1,0 +1,2 @@
+topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url,distribution_target
+tp_20260716_ancient_pop_005,batch_20260716_ancient_pop_005,"故人远行后多年重逢，在江南暮色中把旧日遗憾说完", "喜欢古风流行、叙事感情歌和温柔重逢主题的听众", "温柔、克制、释然、微微明亮", "江南水巷、晚渡、旧桥、桂花、归舟", "原创古风流行完整单曲，旋律自然易唱，钢琴、木吉他、笛子与弦乐融合；以叙事为主，不使用戏腔或特定歌手模仿；副歌清晰有记忆点，前奏短，适合完整收听", qishui_music, pending, text_to_music,, music_platform

@@ -1,0 +1,2 @@
+topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url,distribution_target
+tp_20260714_guofeng_001,batch_20260714_guofeng_001,"雨夜古城里一场迟到多年的重逢，送灯的人终于等到远行归来的你", "喜欢国风流行、古城叙事和有画面感情歌的听众", "苍凉后回暖、克制而深情", "青石桥、旧戏台、茶馆、纸伞、河灯", "原创国风流行完整单曲，钢琴与琵琶、笛子、低音弦乐和现场鼓融合；男声或中性声线，自然叙事；前奏不超过8秒，主歌后快速进入副歌，副歌要有高辨识度记忆点；时长目标200到240秒", qishui_music, pending, text_to_music,, music_platform

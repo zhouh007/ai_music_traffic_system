@@ -1,0 +1,2 @@
+topic_id,batch_id,topic,audience,mood,scene,style_hint,publish_platform,status,generation_mode,reference_audio_url,distribution_target
+tp_20260715_guofeng_pop_002,batch_20260715_guofeng_pop_002,"江南旧巷烟雨里与多年未见的故人重逢，把错过的四季唱成一首温柔的歌", "喜欢国风流行、江南意境和温暖叙事情歌的听众", "温柔、怀旧、重逢后的明亮", "乌篷船、石桥、杏花、旧唱片店、雨巷", "原创国风流行完整单曲，钢琴、木吉他、琵琶、竹笛与弦乐融合；自然清澈人声，旋律流畅易唱；副歌短句有记忆点，具有江南烟雨、撑伞回眸、乌篷船灯影等可独立剪辑的 MV 画面；前奏不超过8秒，完整时长目标200到240秒", qishui_music, pending, text_to_music,, music_platform

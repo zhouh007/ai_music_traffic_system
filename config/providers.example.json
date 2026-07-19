@@ -20,10 +20,10 @@
     "timeout_seconds": 360
   },
   "image_provider": {
-    "name": "agnes",
-    "api_key_env": "AGNES_API_KEY",
-    "base_url": "https://apihub.agnes-ai.com/v1",
-    "model": "agnes-image-2.0-flash",
+    "name": "codex2api",
+    "api_key_env": "CODEX2API_API_KEY",
+    "base_url": "https://www.codex2api.com",
+    "model": "gpt-image-1.5",
     "size": "1024x1024",
     "return_base64": false,
     "timeout_seconds": 180

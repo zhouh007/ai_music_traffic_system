@@ -4,6 +4,8 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field, model_validator
 
+from .style_profiles import expand_style_tag, normalize_style_tag
+
 
 class TopicRecord(BaseModel):
     topic_id: str
@@ -12,12 +14,32 @@ class TopicRecord(BaseModel):
     audience: str
     mood: str
     scene: str
-    style_hint: str
+    style_hint: str = ""
+    style_tag: str = ""
     publish_platform: str
     status: str = "pending"
     generation_mode: str = "text_to_music"
     reference_audio_url: str = ""
     distribution_target: str = "hybrid"
+    # Product brief fields. Legacy topic CSVs remain valid through empty defaults.
+    user_need: str = ""
+    core_conflict: str = ""
+    unique_observation: str = ""
+    emotional_payoff: str = ""
+    visual_scene: str = ""
+    series_name: str = ""
+    creative_mode: str = "auto"
+
+    @model_validator(mode="after")
+    def apply_style_tag(self) -> "TopicRecord":
+        self.style_tag = normalize_style_tag(self.style_tag)
+        profile = expand_style_tag(self.style_tag)
+        if profile:
+            if not self.style_hint.strip():
+                self.style_hint = profile["style_hint"]
+            if not self.creative_mode.strip() or self.creative_mode == "auto":
+                self.creative_mode = profile["creative_mode"]
+        return self
 
 
 class SongRecord(BaseModel):
@@ -185,7 +207,7 @@ class MusicProviderConfig(ProviderBaseConfig):
 
 
 class ImageProviderConfig(ProviderBaseConfig):
-    base_url: str = "https://apihub.agnes-ai.com/v1"
-    model: str = "agnes-image-2.0-flash"
+    base_url: str = "https://www.codex2api.com"
+    model: str = "gpt-image-1.5"
     size: str = "1024x1024"
     return_base64: bool = False

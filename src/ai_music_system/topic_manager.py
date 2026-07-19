@@ -16,11 +16,18 @@ TOPIC_FIELDNAMES = [
     "mood",
     "scene",
     "style_hint",
+    "style_tag",
     "publish_platform",
     "status",
     "generation_mode",
     "reference_audio_url",
     "distribution_target",
+    "user_need",
+    "core_conflict",
+    "unique_observation",
+    "emotional_payoff",
+    "visual_scene",
+    "series_name",
 ]
 
 
@@ -52,10 +59,17 @@ def build_topic_record(
     mood: str,
     scene: str,
     style_hint: str,
+    style_tag: str = "",
     publish_platform: str,
     generation_mode: str = "text_to_music",
     reference_audio_url: str = "",
     distribution_target: str = "hybrid",
+    user_need: str = "",
+    core_conflict: str = "",
+    unique_observation: str = "",
+    emotional_payoff: str = "",
+    visual_scene: str = "",
+    series_name: str = "",
 ) -> TopicRecord:
     normalized_distribution_target = infer_distribution_target(distribution_target, publish_platform)
     return TopicRecord(
@@ -66,9 +80,16 @@ def build_topic_record(
         mood=mood.strip(),
         scene=scene.strip(),
         style_hint=style_hint.strip(),
+        style_tag=style_tag.strip(),
         publish_platform=publish_platform.strip(),
         status="pending",
         generation_mode=generation_mode.strip() or "text_to_music",
         reference_audio_url=reference_audio_url.strip(),
         distribution_target=normalized_distribution_target,
+        user_need=user_need.strip(),
+        core_conflict=core_conflict.strip(),
+        unique_observation=unique_observation.strip(),
+        emotional_payoff=emotional_payoff.strip(),
+        visual_scene=visual_scene.strip(),
+        series_name=series_name.strip(),
     )

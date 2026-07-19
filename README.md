@@ -195,6 +195,29 @@ Review rows now include:
 - target-platform alignment and traceability state
 - `workflow-next` can preview the recommended next primary-platform step, and `--execute` can run that step
 
+## Content quality requirements
+
+Lyrics and title creation are local-first. The active production path does not call an external lyrics or title model: local lyrics input is used when present, otherwise the built-in creative-brief composer and title selector are used. The legacy lyrics provider configuration remains for backward compatibility only.
+
+Generation topics may include a creative brief in addition to the legacy topic fields:
+
+- `user_need`: the concrete situation in which a listener or creator will use the song
+- `core_conflict`: the human or relationship tension that drives the lyric
+- `unique_observation`: a non-generic detail that must become a memorable lyric line
+- `emotional_payoff`: the emotional change the listener should receive
+- `visual_scene`: the concrete scene that can guide both lyrics and cover direction
+- `series_name`: the recurring content series, when the song belongs to one
+
+Legacy topic CSV files remain readable, but new production topics should fill at least four of the five creative-brief fields before generation.
+
+Quality evaluation now has three layers:
+
+1. Technical: required assets, readable text, duration, vocal entry, and cover dimensions.
+2. Content: song structure, concrete imagery, controlled abstraction, repeatable hook, and creative-brief completeness.
+3. Context: valid distribution target, usable scene, and defined audience.
+
+A song is not publishable when any layer fails. Short-video songs optimize for an early usable excerpt; music-platform songs optimize for a complete single and second-listen value.
+
 ### 9. Approve a whole batch
 
 ```powershell
