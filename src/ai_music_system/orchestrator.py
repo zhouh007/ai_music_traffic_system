@@ -234,14 +234,21 @@ class BatchOrchestrator:
         last_error = ""
         for attempt in range(retry_count + 1):
             style_hint = self._build_music_style_hint(topic, topic.style_hint, attempt)
-            music_meta = self.music_provider.generate_music(
-                lyrics=lyrics,
-                title=song.title,
-                style_hint=style_hint,
-                output_path=song.audio_path,
-                generation_mode=topic.generation_mode,
-                reference_audio_url=topic.reference_audio_url,
-            )
+            try:
+                music_meta = self.music_provider.generate_music(
+                    lyrics=lyrics,
+                    title=song.title,
+                    style_hint=style_hint,
+                    output_path=song.audio_path,
+                    generation_mode=topic.generation_mode,
+                    reference_audio_url=topic.reference_audio_url,
+                )
+            except Exception as exc:
+                last_error = str(exc)
+                if attempt < retry_count:
+                    log_step(f"Retrying music for {song.song_id}: provider error: {last_error}")
+                    continue
+                break
             write_json(song.song_dir / f"music_response_attempt_{attempt + 1}.json", music_meta)
             write_json(song.song_dir / "music_response.json", music_meta)
             audio_analysis = self._analyze_audio_result(

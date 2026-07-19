@@ -33,6 +33,8 @@ class MiniMaxMusicProvider:
             bearer_token=self.config.api_key,
             timeout_seconds=self.config.timeout_seconds,
         )
+        if not response:
+            raise ValueError("MiniMax returned an empty response.")
         self._write_audio_file(response, output_path)
         response["requested_title"] = title
         return response
