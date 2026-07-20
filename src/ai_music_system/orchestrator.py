@@ -68,7 +68,12 @@ class BatchOrchestrator:
 
             self._generate_music_with_validation(song=song, topic=topic, lyrics=clean_lyrics)
 
-            cover_status = {"status": "pending", "song_id": song.song_id}
+            cover_status = {
+                "status": "pending",
+                "song_id": song.song_id,
+                "provider": self.config.image_provider.name,
+                "model": self.config.image_provider.model,
+            }
             try:
                 cover_prompt_template = (
                     self.project_root / "src" / "ai_music_system" / "prompts" / "cover_prompt.txt"
@@ -86,7 +91,20 @@ class BatchOrchestrator:
                     publish_size=self.config.cover_publish_size,
                     hd_size=self.config.cover_hd_size,
                 )
-                cover_status = {"status": "ready", "song_id": song.song_id}
+                cover_status = {
+                    "status": "ready",
+                    "song_id": song.song_id,
+                    "provider": self.config.image_provider.name,
+                    "model": self.config.image_provider.model,
+                    "prompt": cover_prompt,
+                    "source_ids": [],
+                    "generated_at": datetime.now().isoformat(timespec="seconds"),
+                    "outputs": {
+                        "raw": str(song.cover_raw_path),
+                        "publish": str(song.cover_publish_path),
+                        "hd": str(song.cover_hd_path),
+                    },
+                }
             except Exception as cover_exc:
                 cover_status = {
                     "status": "pending",

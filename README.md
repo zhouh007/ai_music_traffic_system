@@ -525,3 +525,11 @@ Current version provides:
 - publish job records now keep `status_history` for state transitions
 
 Real external runs still require valid provider API keys.
+
+### Local cover generation
+
+For the verified local GPT Image Playground workflow, use the fixed browser
+configuration and verification steps in
+[`docs/LOCAL_IMAGE_PLAYGROUND_RUNBOOK.md`](docs/LOCAL_IMAGE_PLAYGROUND_RUNBOOK.md).
+Cover failures remain non-blocking, and successful cover lineage is recorded in
+each song directory's `cover_task.json`.
