@@ -67,7 +67,10 @@ class MiniMaxMusicProvider:
         return payload
 
     def _write_audio_file(self, response: dict, output_path: Path) -> None:
-        audio_value = response.get("data", {}).get("audio")
+        data = response.get("data") or {}
+        if not isinstance(data, dict):
+            raise ValueError("MiniMax response included invalid audio data.")
+        audio_value = data.get("audio")
         if not audio_value:
             raise ValueError("MiniMax response did not include audio data.")
         output_path.parent.mkdir(parents=True, exist_ok=True)

@@ -63,6 +63,7 @@ class SongRecord(BaseModel):
     caption_path: Path
     review_path: Path
     error_message: str = ""
+    douyin_audio_path: Path | None = None
 
 
 class ReviewRecord(BaseModel):
@@ -145,6 +146,7 @@ class AppConfig(BaseModel):
     music_platform_max_duration_seconds: float = 240.0
     music_platform_retry_target_vocal_seconds: float = 8.0
     music_platform_retry_target_duration_seconds: float = 180.0
+    douyin_clip_max_seconds: float = 60.0
     skip_existing_steps: bool = True
     target_platform: str = "douyin"
     prompt_version: str = "v1"
@@ -208,6 +210,11 @@ class MusicProviderConfig(ProviderBaseConfig):
 
 class ImageProviderConfig(ProviderBaseConfig):
     base_url: str = "https://www.codex2api.com"
+    api_proxy_url: str = ""
+    use_api_proxy: bool = False
     model: str = "gpt-image-1.5"
     size: str = "1024x1024"
+    output_format: str = "png"
+    quality: str = "auto"
+    moderation: str = "auto"
     return_base64: bool = False

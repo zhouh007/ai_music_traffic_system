@@ -23,8 +23,13 @@
     "name": "codex2api",
     "api_key_env": "CODEX2API_API_KEY",
     "base_url": "https://www.codex2api.com",
+    "api_proxy_url": "",
+    "use_api_proxy": false,
     "model": "gpt-image-2",
     "size": "1024x1024",
+    "output_format": "png",
+    "quality": "auto",
+    "moderation": "auto",
     "return_base64": false,
     "timeout_seconds": 180
   }

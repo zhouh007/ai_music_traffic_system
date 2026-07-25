@@ -1,9 +1,13 @@
 from __future__ import annotations
 
 from datetime import datetime
+import os
 from pathlib import Path
+import subprocess
+import sys
 
 from .audio_review import detect_first_vocal_entry
+from .audio_variants import create_douyin_audio_variant, extract_douyin_clip_lyrics
 from .cover_strategy import format_cover_prompt
 from .http import JsonHttpClient
 from .lyrics_prompting import load_lyrics_prompt
@@ -66,53 +70,22 @@ class BatchOrchestrator:
             write_json(song.song_dir / "title_response.json", title_response)
             write_text(song.song_dir / "title_selected.txt", refined_title)
 
-            self._generate_music_with_validation(song=song, topic=topic, lyrics=clean_lyrics)
-
-            cover_status = {
-                "status": "pending",
-                "song_id": song.song_id,
-                "provider": self.config.image_provider.name,
-                "model": self.config.image_provider.model,
-            }
             try:
-                cover_prompt_template = (
-                    self.project_root / "src" / "ai_music_system" / "prompts" / "cover_prompt.txt"
-                ).read_text(encoding="utf-8")
-                cover_prompt, cover_direction = format_cover_prompt(cover_prompt_template, song, topic, clean_lyrics)
-                write_text(song.song_dir / "cover_prompt.txt", cover_prompt)
-                write_json(song.song_dir / "cover_direction.json", cover_direction)
-                cover_meta = self.image_provider.generate_cover(cover_prompt, song.cover_raw_path)
-                write_json(song.song_dir / "cover_response.json", cover_meta)
-                render_publish_covers(
-                    source_path=song.cover_raw_path,
-                    publish_path=song.cover_publish_path,
-                    hd_path=song.cover_hd_path,
-                    title=song.title,
-                    publish_size=self.config.cover_publish_size,
-                    hd_size=self.config.cover_hd_size,
-                )
-                cover_status = {
-                    "status": "ready",
-                    "song_id": song.song_id,
-                    "provider": self.config.image_provider.name,
-                    "model": self.config.image_provider.model,
-                    "prompt": cover_prompt,
-                    "source_ids": [],
-                    "generated_at": datetime.now().isoformat(timespec="seconds"),
-                    "outputs": {
-                        "raw": str(song.cover_raw_path),
-                        "publish": str(song.cover_publish_path),
-                        "hd": str(song.cover_hd_path),
-                    },
-                }
+                self._start_cover_job(song=song, topic=topic, lyrics=clean_lyrics)
             except Exception as cover_exc:
-                cover_status = {
-                    "status": "pending",
-                    "song_id": song.song_id,
-                    "error_message": str(cover_exc),
-                }
-                log_step(f"Cover deferred for {song.song_id}: {cover_exc}")
-            write_json(song.song_dir / "cover_task.json", cover_status)
+                write_json(
+                    song.song_dir / "cover_task.json",
+                    {
+                        "status": "pending",
+                        "song_id": song.song_id,
+                        "provider": self.config.image_provider.name,
+                        "model": self.config.image_provider.model,
+                        "error_message": str(cover_exc),
+                    },
+                )
+                log_step(f"Cover job could not start for {song.song_id}: {cover_exc}")
+            self._generate_music_with_validation(song=song, topic=topic, lyrics=clean_lyrics)
+            self._create_douyin_variant(song=song, lyrics=clean_lyrics)
 
             song.status = "generated"
             song.generated_at = datetime.now().isoformat(timespec="seconds")
@@ -199,22 +172,40 @@ class BatchOrchestrator:
         if requested_step == "music":
             clean_lyrics = song.lyrics_clean_path.read_text(encoding="utf-8")
             self._generate_music_with_validation(song=song, topic=topic, lyrics=clean_lyrics)
+            self._create_douyin_variant(song=song, lyrics=clean_lyrics)
         if requested_step == "cover":
             lyrics = song.lyrics_clean_path.read_text(encoding="utf-8")
             cover_prompt_template = (self.project_root / "src" / "ai_music_system" / "prompts" / "cover_prompt.txt").read_text(encoding="utf-8")
             cover_prompt, cover_direction = format_cover_prompt(cover_prompt_template, song, topic, lyrics)
-            write_text(song.song_dir / "cover_prompt.txt", cover_prompt)
-            write_json(song.song_dir / "cover_direction.json", cover_direction)
-            cover_meta = self.image_provider.generate_cover(cover_prompt, song.cover_raw_path)
-            write_json(song.song_dir / "cover_response.json", cover_meta)
-            render_publish_covers(
-                source_path=song.cover_raw_path,
-                publish_path=song.cover_publish_path,
-                hd_path=song.cover_hd_path,
-                title=song.title,
-                publish_size=self.config.cover_publish_size,
-                hd_size=self.config.cover_hd_size,
-            )
+            try:
+                write_text(song.song_dir / "cover_prompt.txt", cover_prompt)
+                write_json(song.song_dir / "cover_direction.json", cover_direction)
+                cover_meta = self.image_provider.generate_cover(cover_prompt, song.cover_raw_path)
+                write_json(song.song_dir / "cover_response.json", cover_meta)
+                render_publish_covers(
+                    source_path=song.cover_raw_path,
+                    publish_path=song.cover_publish_path,
+                    hd_path=song.cover_hd_path,
+                    title=song.title,
+                    publish_size=self.config.cover_publish_size,
+                    hd_size=self.config.cover_hd_size,
+                )
+                write_json(song.song_dir / "cover_task.json", self._cover_ready_status(song, cover_prompt))
+            except Exception as cover_exc:
+                write_json(
+                    song.song_dir / "cover_task.json",
+                    {
+                        "status": "pending",
+                        "song_id": song.song_id,
+                        "provider": self.config.image_provider.name,
+                        "model": self.config.image_provider.model,
+                        "prompt": cover_prompt,
+                        "source_ids": [],
+                        "error_message": str(cover_exc),
+                    },
+                )
+                log_step(f"Cover deferred for {song.song_id}: {cover_exc}")
+                raise
         if requested_step == "package":
             if not song.generated_at:
                 song.generated_at = datetime.now().isoformat(timespec="seconds")
@@ -223,6 +214,67 @@ class BatchOrchestrator:
         song.status = "generated"
         write_json(song.song_dir / "song.json", song.model_dump(mode="json"))
         return song
+
+    def _start_cover_job(self, *, song: SongRecord, topic: TopicRecord, lyrics: str) -> None:
+        """Start cover generation independently so audio validation cannot suppress it."""
+        cover_prompt_template = (
+            self.project_root / "src" / "ai_music_system" / "prompts" / "cover_prompt.txt"
+        ).read_text(encoding="utf-8")
+        cover_prompt, cover_direction = format_cover_prompt(cover_prompt_template, song, topic, lyrics)
+        write_text(song.song_dir / "cover_prompt.txt", cover_prompt)
+        write_json(song.song_dir / "cover_direction.json", cover_direction)
+        write_json(
+            song.song_dir / "cover_task.json",
+            {
+                "status": "running",
+                "song_id": song.song_id,
+                "provider": self.config.image_provider.name,
+                "model": self.config.image_provider.model,
+                "prompt": cover_prompt,
+                "source_ids": [],
+                "started_at": datetime.now().isoformat(timespec="seconds"),
+            },
+        )
+        write_json(song.song_dir / "song.json", song.model_dump(mode="json"))
+        log_path = song.song_dir / "cover_job.log"
+        with log_path.open("a", encoding="utf-8") as cover_log:
+            process = subprocess.Popen(
+                [sys.executable, "-m", "ai_music_system.cli", "retry-song", "--song-id", song.song_id, "--step", "cover"],
+                cwd=self.project_root,
+                env=os.environ.copy(),
+                stdout=cover_log,
+                stderr=subprocess.STDOUT,
+                close_fds=True,
+            )
+        write_json(
+            song.song_dir / "cover_task.json",
+            {
+                "status": "running",
+                "song_id": song.song_id,
+                "provider": self.config.image_provider.name,
+                "model": self.config.image_provider.model,
+                "prompt": cover_prompt,
+                "source_ids": [],
+                "started_at": datetime.now().isoformat(timespec="seconds"),
+                "process_id": process.pid,
+            },
+        )
+
+    def _cover_ready_status(self, song: SongRecord, cover_prompt: str) -> dict:
+        return {
+            "status": "ready",
+            "song_id": song.song_id,
+            "provider": self.config.image_provider.name,
+            "model": self.config.image_provider.model,
+            "prompt": cover_prompt,
+            "source_ids": [],
+            "generated_at": datetime.now().isoformat(timespec="seconds"),
+            "outputs": {
+                "raw": str(song.cover_raw_path),
+                "publish": str(song.cover_publish_path),
+                "hd": str(song.cover_hd_path),
+            },
+        }
 
     def _build_song_record(self, song_id: str, topic: TopicRecord, song_dir: Path) -> SongRecord:
         return SongRecord(
@@ -244,7 +296,42 @@ class BatchOrchestrator:
             meta_path=song_dir / "meta.json",
             caption_path=song_dir / "caption.txt",
             review_path=song_dir / "review.json",
+            douyin_audio_path=song_dir / "audio_douyin.mp3",
         )
+
+    def _create_douyin_variant(self, *, song: SongRecord, lyrics: str) -> None:
+        output_path = song.douyin_audio_path or song.song_dir / "audio_douyin.mp3"
+        try:
+            variant = create_douyin_audio_variant(
+                source_path=song.audio_path,
+                output_path=output_path,
+                lyrics=lyrics,
+                clip_max_duration_seconds=self.config.douyin_clip_max_seconds,
+            )
+            write_json(song.song_dir / "douyin_audio_clip.json", variant)
+            clip_lyrics, section = extract_douyin_clip_lyrics(lyrics)
+            clip_lyrics_path = song.song_dir / "audio_douyin_lyrics.txt"
+            write_text(clip_lyrics_path, clip_lyrics)
+            write_json(
+                song.song_dir / "audio_douyin_lyrics.json",
+                {
+                    "status": "ready",
+                    "audio_path": str(output_path),
+                    "lyrics_path": str(clip_lyrics_path),
+                    "source_lyrics_path": str(song.lyrics_clean_path),
+                    "section": section,
+                    "clip_start_seconds": variant.get("start_seconds"),
+                    "clip_duration_seconds": variant.get("duration_seconds"),
+                    "selection_method": variant.get("selection_method"),
+                    "selection_reason": variant.get("selection_reason"),
+                },
+            )
+        except Exception as exc:
+            write_json(
+                song.song_dir / "douyin_audio_clip.json",
+                {"status": "failed", "source_path": str(song.audio_path), "output_path": str(output_path), "error_message": str(exc)},
+            )
+            log_step(f"Douyin audio variant could not be created for {song.song_id}: {exc}")
 
     def _generate_music_with_validation(self, *, song: SongRecord, topic: TopicRecord, lyrics: str) -> dict:
         # Keep provider spend predictable: one initial attempt plus at most two retries.
@@ -261,6 +348,8 @@ class BatchOrchestrator:
                     generation_mode=topic.generation_mode,
                     reference_audio_url=topic.reference_audio_url,
                 )
+                if not isinstance(music_meta, dict):
+                    raise RuntimeError("Music provider returned no response metadata.")
             except Exception as exc:
                 last_error = str(exc)
                 if attempt < retry_count:

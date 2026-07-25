@@ -11,6 +11,7 @@
   "music_platform_max_duration_seconds": 240,
   "music_platform_retry_target_vocal_seconds": 8,
   "music_platform_retry_target_duration_seconds": 180,
+  "douyin_clip_max_seconds": 60,
   "auto_retry_count": 1,
   "skip_existing_steps": true
 }

@@ -61,6 +61,7 @@ def build_song_metadata(song: SongRecord, topic: TopicRecord, config: AppConfig)
             "lyrics_raw_path": str(song.lyrics_raw_path),
             "lyrics_clean_path": str(song.lyrics_clean_path),
             "audio_path": str(song.audio_path),
+            "douyin_audio_path": str(song.douyin_audio_path or song.song_dir / "audio_douyin.mp3"),
             "cover_raw_path": str(song.cover_raw_path),
             "cover_publish_path": str(song.cover_publish_path),
             "cover_hd_path": str(song.cover_hd_path),
@@ -94,6 +95,7 @@ def export_approved_song(song: SongRecord, review: ReviewRecord, export_root: Pa
     target_dir.mkdir(parents=True, exist_ok=True)
     for path in [
         song.audio_path,
+        song.douyin_audio_path or song.song_dir / "audio_douyin.mp3",
         song.lyrics_clean_path,
         song.cover_publish_path,
         song.cover_hd_path,

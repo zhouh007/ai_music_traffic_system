@@ -6,6 +6,8 @@ from PIL import Image, ImageDraw, ImageFont, ImageStat
 
 
 FONT_CANDIDATES = [
+    Path("C:/Windows/Fonts/NotoSerifSC-VF.ttf"),
+    Path("C:/Windows/Fonts/NotoSansSC-VF.ttf"),
     Path("C:/Windows/Fonts/msyhbd.ttc"),
     Path("C:/Windows/Fonts/msyh.ttc"),
     Path("C:/Windows/Fonts/simhei.ttf"),

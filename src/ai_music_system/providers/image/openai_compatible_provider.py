@@ -20,9 +20,15 @@ class OpenAICompatibleImageProvider:
             "prompt": prompt,
             "size": self.config.size,
             "n": 1,
+            "output_format": self.config.output_format,
+            "quality": self.config.quality,
+            "moderation": self.config.moderation,
         }
-        base_url = self.config.base_url.rstrip("/")
-        endpoint = base_url if base_url.endswith("/v1") else f"{base_url}/v1"
+        if self.config.use_api_proxy and self.config.api_proxy_url.strip():
+            endpoint = self.config.api_proxy_url.rstrip("/")
+        else:
+            base_url = self.config.base_url.rstrip("/")
+            endpoint = base_url if base_url.endswith("/v1") else f"{base_url}/v1"
         response = self.http_client.post_json(
             url=endpoint + "/images/generations",
             payload=payload,
