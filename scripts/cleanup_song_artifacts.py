@@ -26,6 +26,7 @@ KEEP_FILES = {
     "lyrics_raw.txt",
     "meta.json",
     "review.json",
+    "release_manifest.json",
     "song.json",
     "title_prompt.txt",
     "title_selected.txt",

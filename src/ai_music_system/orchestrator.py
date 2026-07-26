@@ -14,7 +14,7 @@ from .lyrics_prompting import load_lyrics_prompt
 from .models import SongRecord, TopicRecord
 from .pipeline.cover_renderer import render_publish_covers
 from .pipeline.lyrics_cleaner import normalize_lyrics
-from .pipeline.package_builder import build_caption, build_song_metadata
+from .pipeline.package_builder import build_caption, build_release_manifest, build_song_metadata
 from .platform_profiles import audio_constraints, infer_distribution_target, is_music_platform_target
 from .providers.image.openai_compatible_provider import OpenAICompatibleImageProvider
 from .local_lyrics import compose_local_lyrics, select_local_title
@@ -91,6 +91,7 @@ class BatchOrchestrator:
             song.generated_at = datetime.now().isoformat(timespec="seconds")
             write_json(song.meta_path, build_song_metadata(song, topic, self.config))
             write_text(song.caption_path, build_caption(song, topic))
+            write_json(song.song_dir / "release_manifest.json", build_release_manifest(song))
             save_default_review(
                 song.review_path,
                 song.song_id,

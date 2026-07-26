@@ -86,6 +86,11 @@ def _number(value) -> float | None:
 
 def _text_is_readable(value: str) -> bool:
     text = value or ""
+    replacement_signature = "".join(map(chr, (0x951F, 0x65A4, 0x62F7)))
+    if chr(0xFFFD) in text or "??" in text or replacement_signature in text:
+        return False
+    if "\ufffd" in text or "??" in text:
+        return False
     markers = ("\ufffd", "??", "闆", "鏅", "绐", "鍒", "鐨", "淇", "璇", "鎴", "杞", "€", "?鎴", "閿熸", "枻鎷")
     if any(marker in text for marker in markers):
         return False

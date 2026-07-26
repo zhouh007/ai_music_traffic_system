@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import shutil
 from pathlib import Path
@@ -88,6 +89,29 @@ def build_caption(song: SongRecord, topic: TopicRecord) -> str:
         f"《{song.title}》\n"
         "#AI音乐 #情绪歌曲 #短视频BGM"
     )
+
+
+def build_release_manifest(song: SongRecord) -> dict:
+    """Describe exact release files and hashes for one generated song."""
+    candidates = {
+        "audio": song.audio_path,
+        "audio_douyin": song.douyin_audio_path or song.song_dir / "audio_douyin.mp3",
+        "audio_douyin_lyrics": song.song_dir / "audio_douyin_lyrics.txt",
+        "lyrics": song.lyrics_clean_path,
+        "cover": song.cover_publish_path,
+        "cover_hd": song.cover_hd_path,
+        "metadata": song.meta_path,
+        "caption": song.caption_path,
+    }
+    files = {}
+    for name, path in candidates.items():
+        if path.exists() and path.is_file():
+            files[name] = {
+                "path": str(path),
+                "bytes": path.stat().st_size,
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            }
+    return {"song_id": song.song_id, "title": song.title, "status": song.status, "files": files}
 
 
 def export_approved_song(song: SongRecord, review: ReviewRecord, export_root: Path) -> Path:
