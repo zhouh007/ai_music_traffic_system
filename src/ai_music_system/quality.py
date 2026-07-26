@@ -23,6 +23,7 @@ def evaluate_quality(song: SongRecord, topic: TopicRecord) -> dict:
     technical = {
         "lyrics_present": bool(lyrics.strip()),
         "text_integrity_valid": all(_text_is_readable(value) for value in (lyrics, song.title, topic.topic, topic.audience, topic.scene)),
+        "language_anomaly_valid": all(_language_anomaly_valid(value) for value in (lyrics, song.title)),
         "audio_present": audio_size > 10_000,
         "cover_present": cover_size > 1_000,
         "cover_dimensions_valid": dimensions == (1440, 1440),
@@ -97,6 +98,21 @@ def _text_is_readable(value: str) -> bool:
     # Common UTF-8 decoded as GBK fragments often contain these paired forms.
     mojibake_pairs = ("鍚", "浼", "姣", "鐢", "妫", "懑", "绔", "搴", "闂", "笂")
     return not any(text.count(pair) >= 2 for pair in mojibake_pairs)
+
+
+def _language_anomaly_valid(value: str) -> bool:
+    """Reject provider output with a suspiciously dominant foreign script.
+
+    The product currently targets Chinese lyrics/titles. A small amount of
+    Latin text is fine, but Hangul/Cyrillic-heavy output is usually an encoding
+    or provider-language failure and should be reviewed instead of published.
+    """
+    text = "".join((value or "").split())
+    if not text:
+        return True
+    hangul = sum("\uac00" <= char <= "\ud7a3" for char in text)
+    cyrillic = sum("\u0400" <= char <= "\u04ff" for char in text)
+    return max(hangul, cyrillic) / len(text) < 0.2
 
 
 def _has_song_structure(lyrics: str, music_target: bool, creative_mode: str = "auto") -> bool:
