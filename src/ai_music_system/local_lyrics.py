@@ -11,10 +11,11 @@ def _u(value: str) -> str:
 
 def compose_local_lyrics(topic: TopicRecord) -> str:
     """Compose Chinese lyrics locally without an external language model."""
-    observation = _usable_chinese(topic.unique_observation, _u(r"\u6709\u4eba\u603b\u4f1a\u63d0\u524d\u4e00\u70b9\u5230\u8fbe\uff0c\u628a\u676f\u67c4\u8f6c\u5411\u6211\u559c\u6b22\u7684\u90a3\u4e00\u8fb9"))
-    scene = _usable_chinese(topic.visual_scene or topic.scene, _u(r"\u96e8\u540e\u7684\u5496\u5561\u5e97\u7a97\u8fb9\u548c\u4e00\u76cf\u5c0f\u5c0f\u7684\u53a8\u623f\u706f"))
-    conflict = _usable_chinese(topic.core_conflict, _u(r"\u6211\u62c5\u5fc3\u5e73\u51e1\u7684\u65e5\u5b50\u7559\u4e0d\u4f4f\u5fc3\u52a8"))
-    hook = _u(r"\u666e\u901a\u4e5f\u4f1a\u53d8\u751c")
+    observation = _usable_chinese(topic.unique_observation, _u(r"\u98ce\u5439\u8fc7\u957f\u8857\uff0c\u628a\u706f\u5f71\u8f7b\u8f7b\u6447\u4eae"))
+    scene = _usable_chinese(topic.visual_scene or topic.scene, _u(r"\u6708\u6865\u4e0b\u7684\u5f52\u821f\u548c\u8fdc\u5c71\u706f\u706b"))
+    conflict = _usable_chinese(topic.core_conflict, _u(r"\u8d70\u4e86\u5f88\u8fdc\uff0c\u5fc3\u91cc\u8fd8\u653e\u4e0d\u4e0b\u90a3\u6bb5\u65e7\u65f6\u5149"))
+    payoff = _usable_chinese(topic.emotional_payoff, _u(r"\u613f\u4f60\u5e73\u5b89\uff0c\u4e5f\u613f\u6211\u5e26\u7740\u6e29\u67d4\u7ee7\u7eed\u8fdc\u65b9"))
+    hook = _hook_from_topic(topic)
     template = r"""[Verse 1]
 {scene}
 {observation}
@@ -23,7 +24,7 @@ def compose_local_lyrics(topic: TopicRecord) -> str:
 
 [Pre-Chorus]
 {conflict}
-{_u(r"\u5374\u6709\u4e00\u76cf\u706f\u66ff\u6211\u4eec\u628a\u65b9\u5411\u7559\u7740")}
+{_u(r"\u4e14\u8ba9\u4e00\u76cf\u706f\u66ff\u665a\u5f52\u7684\u4eba\u7559\u7740")}
 
 [Chorus]
 {hook}
@@ -48,16 +49,28 @@ def compose_local_lyrics(topic: TopicRecord) -> str:
 {hook}
 {_u(r"\u8ba9\u6bcf\u4e2a\u666e\u901a\u7684\u4eca\u5929\u90fd\u6709\u56de\u58f0")}
 {hook}
-{_u(r"\u5f53\u6240\u6709\u5c0f\u4e8b\u7ec8\u4e8e\u6709\u4e86\u59d3\u540d")}
+{payoff}
 
 [Outro]
 \u96e8\u505c\u4ee5\u540e\uff0c\u4ecd\u6709\u4eba\u628a\u706f\u7559\u7740"""
     template = re.sub(r'\{_u\(r"([^"]*)"\)\}', lambda match: _u(match.group(1)), template)
-    return _u(template.format(scene=scene, observation=observation, conflict=conflict, hook=hook)).strip()
+    return _u(template.format(scene=scene, observation=observation, conflict=conflict, payoff=payoff, hook=hook)).strip()
 
 
 def select_local_title(topic: TopicRecord) -> str:
-    return _u(r"\u5c0f\u5c0f\u5e78\u798f")
+    title = " ".join((topic.topic or "").split()).strip()
+    title = re.split(r"[，。！？、；：,:!?]", title, maxsplit=1)[0].strip()
+    if 3 <= len(title) <= 12 and _usable_chinese(title, ""):
+        return title
+    scene = " ".join((topic.visual_scene or topic.scene or "月下归舟").split()).strip()
+    scene = re.split(r"[，。！？、；：,:!?]", scene, maxsplit=1)[0].strip()
+    return scene[:12] or _u(r"\u6708\u4e0b\u5f52\u821f")
+
+
+def _hook_from_topic(topic: TopicRecord) -> str:
+    seed = topic.emotional_payoff or topic.topic or _u(r"\u613f\u4f60\u5e73\u5b89")
+    seed = re.split(r"[，。！？、；：,:!?]", " ".join(seed.split()), maxsplit=1)[0].strip()
+    return seed[:10] or _u(r"\u613f\u4f60\u5e73\u5b89")
 
 
 def _usable_chinese(value: str, fallback: str) -> str:

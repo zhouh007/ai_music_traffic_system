@@ -133,9 +133,10 @@ class LocalLyricsTests(unittest.TestCase):
         topic = TopicRecord(topic_id="tp_local", batch_id="batch", topic="small happiness", audience="listeners", mood="sweet", scene="cafe", style_hint="pop", publish_platform="qishui_music", distribution_target="music_platform", user_need="a complete song", core_conflict="ordinary days feel too small", unique_observation="the cup handle faces the usual side", emotional_payoff="ordinary becomes sweet", visual_scene="two cups by a window")
         lyrics = compose_local_lyrics(topic)
         self.assertIn("[Chorus]", lyrics)
-        self.assertIn("普通也会变甜", lyrics)
+        self.assertIn("[Verse 2]", lyrics)
+        self.assertNotIn("小小幸福", lyrics)
         self.assertIn("[Bridge]", lyrics)
-        self.assertEqual(select_local_title(topic), "小小幸福")
+        self.assertEqual(select_local_title(topic), "small happiness")
 
 
 if __name__ == "__main__":
