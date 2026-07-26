@@ -631,11 +631,15 @@ def _run_batch(project_root: Path, config, topics_file: Path) -> None:
     succeeded = 0
     failed = 0
     for topic in topics:
-        song = orchestrator.run_topic(topic)
-        if song.status == "generated":
-            succeeded += 1
-        else:
+        try:
+            song = orchestrator.run_topic(topic)
+            if song.status == "generated":
+                succeeded += 1
+            else:
+                failed += 1
+        except Exception as exc:
             failed += 1
+            log_step(f"Topic failed; continuing with next candidate: {topic.topic_id} | {exc}")
     log_step(f"Batch complete: {topics_path} | succeeded={succeeded} failed={failed}")
 
 
