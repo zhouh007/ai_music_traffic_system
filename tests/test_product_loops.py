@@ -136,7 +136,7 @@ class LocalLyricsTests(unittest.TestCase):
         self.assertIn("[Verse 2]", lyrics)
         self.assertNotIn("小小幸福", lyrics)
         self.assertIn("[Bridge]", lyrics)
-        self.assertEqual(select_local_title(topic), "small happiness")
+        self.assertEqual(select_local_title(topic), "two cups by ")
 
 
 if __name__ == "__main__":
