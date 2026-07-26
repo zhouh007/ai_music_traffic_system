@@ -91,6 +91,23 @@ def detect_first_vocal_entry(audio_path: Path, language: str = "zh") -> dict:
     }
 
 
+def find_lyric_window(audio_path: Path, lyric_text: str, language: str = "zh") -> dict:
+    """Find the first ASR segment matching a lyric line and its next segments."""
+    target = "".join(char for char in lyric_text if char.isalnum())
+    if len(target) < 4:
+        return {"found": False, "reason": "lyric line too short"}
+    model = _load_model()
+    segments, _ = model.transcribe(str(audio_path), language=language, vad_filter=True, beam_size=1, condition_on_previous_text=False)
+    items = list(segments)
+    for index, segment in enumerate(items):
+        text = "".join(char for char in segment.text if char.isalnum())
+        if len(text) < 4 or not (target[:4] in text or text[:4] in target):
+            continue
+        end_index = min(len(items) - 1, index + 7)
+        return {"found": True, "start_seconds": round(float(segment.start), 2), "end_seconds": round(float(items[end_index].end), 2), "matched_text": segment.text.strip()}
+    return {"found": False, "reason": "no matching ASR segment"}
+
+
 def measure_audio_signal(audio_path: Path) -> dict:
     """Read inexpensive FFmpeg loudness/peak metrics for release diagnostics."""
     try:

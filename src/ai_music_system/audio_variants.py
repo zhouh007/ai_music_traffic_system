@@ -6,7 +6,7 @@ from pathlib import Path
 
 import imageio_ffmpeg
 
-from .audio_review import detect_first_vocal_entry
+from .audio_review import detect_first_vocal_entry, find_lyric_window
 
 
 def extract_douyin_clip_lyrics(lyrics: str) -> tuple[str, str]:
@@ -125,6 +125,26 @@ def create_douyin_audio_variant(
         source_duration,
         clip_max_duration_seconds,
     )
+    # Replace the proportional estimate with actual ASR timing when possible.
+    chorus_text, _ = extract_douyin_clip_lyrics(lyrics)
+    chorus_lines = [line.strip() for line in chorus_text.splitlines() if line.strip() and not line.strip().startswith("[")]
+    if chorus_lines:
+        window = find_lyric_window(source_path, chorus_lines[0])
+        if window.get("found"):
+            selection.update(
+                {
+                    "start_seconds": window["start_seconds"],
+                    "recommended_duration_seconds": min(
+                        clip_max_duration_seconds,
+                        max(20.0, window["end_seconds"] - window["start_seconds"] + 0.5),
+                    ),
+                    "selection_method": "whisper_lyric_window",
+                    "selection_reason": "Matched the first chorus lyric line to Whisper timestamps.",
+                }
+            )
+        else:
+            selection["selection_method"] = "needs_review_estimate"
+            selection["selection_reason"] = "ASR could not match the chorus lyric line; proportional estimate requires review."
     if clip_start_seconds is None:
         requested_start = float(selection["start_seconds"])
     else:
