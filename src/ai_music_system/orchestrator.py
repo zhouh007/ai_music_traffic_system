@@ -6,7 +6,7 @@ from pathlib import Path
 import subprocess
 import sys
 
-from .audio_review import detect_first_vocal_entry
+from .audio_review import detect_first_vocal_entry, measure_audio_signal
 from .audio_variants import create_douyin_audio_variant, extract_douyin_clip_lyrics
 from .cover_strategy import format_cover_prompt
 from .http import JsonHttpClient
@@ -375,6 +375,7 @@ class BatchOrchestrator:
 
     def _analyze_audio_result(self, *, song: SongRecord, topic: TopicRecord, music_meta: dict, attempt: int) -> dict:
         intro_result = detect_first_vocal_entry(song.audio_path)
+        signal_result = measure_audio_signal(song.audio_path)
         first_vocal_second = intro_result.get("first_vocal_second")
         constraints = audio_constraints(topic.distribution_target, topic.publish_platform)
         max_intro_seconds = float(constraints["max_intro_seconds"])
@@ -416,6 +417,7 @@ class BatchOrchestrator:
             "failed_checks": failed_checks,
             "error_message": "" if passed else "; ".join(failed_checks),
             **intro_result,
+            "signal_quality": signal_result,
         }
         write_json(song.song_dir / f"audio_validation_attempt_{attempt}.json", analysis)
         write_json(song.song_dir / "audio_validation.json", analysis)

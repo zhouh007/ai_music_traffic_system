@@ -2,6 +2,10 @@ from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import Path
+import re
+import subprocess
+
+from imageio_ffmpeg import get_ffmpeg_exe
 
 from faster_whisper import WhisperModel
 
@@ -85,3 +89,31 @@ def detect_first_vocal_entry(audio_path: Path, language: str = "zh") -> dict:
         "first_vocal_confidence": first_vocal_confidence,
         "transcript_preview": transcript_preview[:3],
     }
+
+
+def measure_audio_signal(audio_path: Path) -> dict:
+    """Read inexpensive FFmpeg loudness/peak metrics for release diagnostics."""
+    try:
+        result = subprocess.run(
+            [get_ffmpeg_exe(), "-hide_banner", "-i", str(audio_path), "-af", "volumedetect", "-f", "null", "-"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        output = result.stderr
+        mean_match = re.search(r"mean_volume:\s*(-?\d+(?:\.\d+)?) dB", output)
+        max_match = re.search(r"max_volume:\s*(-?\d+(?:\.\d+)?) dB", output)
+        clipped_match = re.search(r"(\d+) clipped samples", output)
+        mean_db = float(mean_match.group(1)) if mean_match else None
+        max_db = float(max_match.group(1)) if max_match else None
+        clipped_samples = int(clipped_match.group(1)) if clipped_match else 0
+        return {
+            "analyzer": "ffmpeg_volumedetect",
+            "available": mean_db is not None or max_db is not None,
+            "mean_volume_db": mean_db,
+            "max_volume_db": max_db,
+            "clipped_samples": clipped_samples,
+            "signal_quality_valid": bool(max_db is None or max_db < 0.0) and clipped_samples == 0,
+        }
+    except (OSError, subprocess.SubprocessError, ValueError):
+        return {"analyzer": "ffmpeg_volumedetect", "available": False, "signal_quality_valid": True}
